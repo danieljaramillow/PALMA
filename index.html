@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balsora · Historial de producción de palma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1A13; --panel:#15241B; --panel2:#1B2D22; --line:#2A4234;
+  --ink:#ECE6D6; --ink2:#9DB0A2; --ink3:#6C8274;
+  --y22:#4E7C59; --y23:#7FA05A; --y24:#C9A227; --y25:#E08A2B; --y26:#DC4F2A;
+  --fruit:#DC4F2A; --amber:#F0A830; --frond:#6FA96B; --water:#3E8C8A;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.num{font-family:'Barlow Condensed','Archivo Narrow','Roboto Condensed',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+
+header.top{padding:34px 0 26px;border-bottom:1px solid var(--line)}
+header.top h1{
+  font-family:'Barlow Condensed',system-ui,sans-serif;
+  font-size:clamp(46px,9vw,88px); line-height:.92; font-weight:600;
+  letter-spacing:-.02em; margin:0 0 10px;
+}
+header.top h1 .thin{font-weight:400;color:var(--frond)}
+header.top p{margin:0;max-width:62ch;color:var(--ink2);font-size:17px}
+.stamp{margin-top:14px;color:var(--ink3);font-size:14px}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);margin:26px 0 8px}
+.kpi{background:var(--panel);padding:16px 14px 14px}
+.kpi .v{font-family:'Barlow Condensed',system-ui,sans-serif;font-size:34px;line-height:1;font-weight:600}
+.kpi .u{font-size:15px;color:var(--ink2);font-weight:400}
+.kpi .k{margin-top:6px;font-size:13.5px;color:var(--ink3);line-height:1.3}
+
+nav.tabs{display:flex;flex-wrap:wrap;gap:0;margin:26px 0 0;border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:10;background:var(--bg);padding-top:6px}
+nav.tabs .tab{
+  appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  color:var(--ink3);font-family:'Barlow Condensed',system-ui,sans-serif;
+  font-size:19px;font-weight:500;letter-spacing:.02em;
+  padding:9px 16px 8px;cursor:pointer;white-space:nowrap;transition:color .15s}
+nav.tabs .tab:hover{color:var(--ink2)}
+nav.tabs .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--fruit)}
+nav.tabs .tab:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+section[data-tab]{display:none}
+section[data-tab].vis{display:block}
+section{margin-top:42px}
+section > h2{
+  font-family:'Barlow Condensed',system-ui,sans-serif;font-weight:600;
+  font-size:30px;line-height:1.1;margin:0 0 4px;letter-spacing:-.01em}
+section > .lead{margin:0 0 16px;color:var(--ink2);max-width:72ch;font-size:15.5px}
+.panel{background:var(--panel);border:1px solid var(--line);padding:18px 16px 12px}
+.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chip{border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  padding:5px 11px 4px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;
+  font-family:'Barlow Condensed',system-ui,sans-serif;letter-spacing:.02em}
+.chip .dot{width:9px;height:9px;border-radius:50%;background:currentColor}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:currentColor}
+.chip[aria-pressed="false"]{opacity:.42}
+.chip:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.chip select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  font-family:'Barlow Condensed',system-ui,sans-serif;font-size:14px;padding:1px 4px;margin:0 2px;cursor:pointer}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{stroke:var(--line);stroke-width:1}
+.gl{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.tk{fill:var(--ink3);font-size:12px;font-family:'Barlow Condensed',system-ui,sans-serif}
+.tkb{fill:var(--ink2);font-size:13px;font-family:'Barlow Condensed',system-ui,sans-serif}
+.vlab{fill:var(--ink);font-size:13px;font-family:'Barlow Condensed',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+
+.note{border-left:2px solid var(--amber);padding:2px 0 2px 14px;margin:16px 0 0;
+  color:var(--ink2);font-size:15px;max-width:74ch}
+.note b{color:var(--ink);font-weight:600}
+
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+thead th{color:var(--ink3);font-weight:500;font-size:13.5px;border-bottom-color:var(--ink3)}
+tbody tr:hover{background:var(--panel2)}
+td.n{font-family:'Barlow Condensed',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:17px}
+.flag{color:var(--amber);font-size:13px}
+
+ul.checks{list-style:none;padding:0;margin:8px 0 0}
+ul.checks li{padding:10px 0;border-bottom:1px solid var(--line);color:var(--ink2);font-size:15px}
+ul.checks li:last-child{border-bottom:0}
+ul.checks b{color:var(--ink);font-weight:600}
+
+footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink3);font-size:14px}
+
+@media (max-width:900px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid2b{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){
+  .reveal{animation:rise .5s ease-out both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top reveal">
+  <h1>Balsora<br><span class="thin">cinco cosechas</span></h1>
+  <p>Todo lo que ha salido del lote desde que arrancó la administración: fruta vendida, racimos, precios y gastos. 70 hectáreas, cerca de 8.610 palmas, mitad sembrada en 2014 y mitad en 2017.</p>
+  <p class="stamp num" id="stamp"></p>
+</header>
+
+<div class="kpis" id="kpis"></div>
+<p class="note" id="kpinote"></p>
+
+<nav class="tabs" id="tabs" aria-label="Secciones del dashboard">
+  <button class="tab" data-t="prod"     aria-selected="true">Producción</button>
+  <button class="tab" data-t="agua"     aria-selected="false">Agua</button>
+  <button class="tab" data-t="abono"    aria-selected="false">Abono</button>
+  <button class="tab" data-t="plata"    aria-selected="false">Plata</button>
+  <button class="tab" data-t="decision" aria-selected="false">La decisión</button>
+  <button class="tab" data-t="datos"    aria-selected="false">Letra chica</button>
+</nav>
+
+<section data-tab="prod">
+  <h2>Cosecha mes a mes</h2>
+  <p class="lead">Kilos de fruta despachados cada mes. Toque un año para apagarlo o encenderlo.</p>
+  <div class="panel">
+    <div class="legend" id="legMes"></div>
+    <div id="chMes"></div>
+  </div>
+  <p class="note"><b>2023 se corta en junio y 2024 casi no tiene segundo semestre.</b> En esos meses la hoja registra pagos pero no despachos de fruta. Vale la pena confirmar si fue una parada real del lote o si quedaron guías sin anotar.</p>
+</section>
+
+<section data-tab="prod">
+  <h2>El cultivo tiene un solo pico</h2>
+  <p class="lead">Promedio de los años completos: cuánto de la cosecha anual cae en cada mes.</p>
+  <div class="grid2">
+    <div class="panel"><div id="chEst"></div></div>
+    <div class="panel"><div id="chFlujo"></div></div>
+  </div>
+  <p class="note" id="estnote"></p>
+</section>
+
+<section data-tab="prod">
+  <h2>Rendimiento contra edad de la palma</h2>
+  <p class="lead">Toneladas por hectárea cada año, con la edad promedio del cultivo debajo. La línea muestra cuánto pesa el racimo.</p>
+  <div class="panel">
+    <div id="chRend"></div>
+  </div>
+  <p class="note" id="rendnote"></p>
+</section>
+
+<section data-tab="abono">
+  <h2>Lo que se abona hoy se cosecha el año que viene</h2>
+  <p class="lead">Barras: plata puesta en fertilización cada año. Puntos: toneladas por hectárea de la cosecha <em>siguiente</em>. La línea punteada es lo que costaría una ronda completa según el plan de la hoja ABONAMIENTO.</p>
+  <div class="panel"><div id="chFert"></div></div>
+  <p class="note" id="fertnote"></p>
+</section>
+
+<section data-tab="plata">
+  <h2>Qué deja el cultivo cuando se le quita lo que no es cultivo</h2>
+  <p class="lead">Separé cada egreso en tres montones: lo que cuesta producir la fruta, lo que cuesta administrar la finca, y lo que sale por fuera del cultivo (impuestos, retiros, deudas, gastos personales). La fertilización va con las cifras reales, no con las de la hoja.</p>
+  <div class="kpis" id="kpiProd" style="margin-top:0"></div>
+  <div class="panel" style="margin-top:18px"><div id="chCascada"></div></div>
+  <p class="note" id="cascnote"></p>
+  <div class="grid2" style="margin-top:18px">
+    <div class="panel"><div id="chUnit"></div></div>
+    <div class="panel"><div id="chComp"></div></div>
+  </div>
+  <p class="note" id="unitnote"></p>
+</section>
+
+<section data-tab="agua">
+  <h2>La lluvia manda con siete meses de anticipación</h2>
+  <p class="lead">Lluvia mensual de la estación IDEAM 13090090 (Santa Ángela, Tolú-Toluviejo) contra los kilos despachados cada mes. Son dos curvas con la misma forma, corridas en el tiempo.</p>
+  <div class="panel"><div id="chLluvia"></div></div>
+  <p class="note" id="lluvianote"></p>
+  <div class="grid2" style="margin-top:18px">
+    <div class="panel"><div id="chClima"></div></div>
+    <div class="panel"><div id="chLag"></div></div>
+  </div>
+  <p class="note" id="lagnote"></p>
+</section>
+
+<section data-tab="agua">
+  <h2>El pluviómetro de la finca dice otra cosa</h2>
+  <p class="lead">Once meses de registro diario del cuaderno, contra lo que estimaba el IDEAM para los mismos meses.</p>
+  <div class="panel"><div id="chPluvio"></div></div>
+  <p class="note" id="pluvnote"></p>
+  <div class="panel" style="margin-top:18px"><div id="chDias"></div></div>
+  <p class="note" id="diasnote"></p>
+</section>
+
+<section data-tab="agua">
+  <h2>El déficit que calculaba el IDEAM, con un asterisco grande</h2>
+  <p class="lead">Déficit de agua por año según la serie estimada: lo que le falta al cultivo para llegar a sus ~140 mm mensuales. Dejo el gráfico porque muestra qué años fueron peores <em>unos respecto de otros</em>, pero el pluviómetro ya demostró que los milímetros absolutos están cortos, así que el déficit real es menor que el que se ve acá.</p>
+  <div class="panel"><div id="chDef"></div></div>
+  <p class="note" id="defnote"></p>
+</section>
+
+<section data-tab="decision">
+  <h2>¿Riego o abono? En 2024 se murieron 80 palmas de sed</h2>
+  <p class="lead">Cada cosecha comparada con la lluvia y el abono del año anterior, que es cuando se define el racimo que se corta. Las cuatro se formaron sin riego, y 2026 tampoco: el sistema queda habilitado apenas esta semana, en plena temporada de lluvias.</p>
+  <div class="panel"><div id="chCruce"></div></div>
+  <p class="note" id="crucenote"></p>
+  <div class="panel" style="margin-top:18px">
+    <ul class="checks" id="veredicto"></ul>
+  </div>
+</section>
+
+<section data-tab="plata">
+  <h2>Lo que pagan por el kilo</h2>
+  <p class="lead">Precio promedio ponderado de cada mes, tomado de las facturas.</p>
+  <div class="panel"><div id="chPrecio"></div></div>
+  <p class="note" id="prenote"></p>
+</section>
+
+<section data-tab="plata">
+  <h2>En qué se va la plata</h2>
+  <p class="lead">Egresos registrados en la hoja, agrupados por concepto. Suma de los cinco años.</p>
+  <div class="grid2b">
+    <div class="panel"><div id="chGasto"></div></div>
+    <div class="panel"><div id="chIE"></div></div>
+  </div>
+  <p class="note" id="gastonote"></p>
+</section>
+
+<section data-tab="prod">
+  <h2>Año por año</h2>
+  <div class="panel" style="padding:10px 16px">
+    <table id="tabla"></table>
+  </div>
+</section>
+
+<section data-tab="datos">
+  <h2>Antes de decidir con estos números</h2>
+  <p class="lead">Lo que encontré revisando los 758 registros de la hoja PALMA.</p>
+  <div class="panel">
+    <ul class="checks">
+      <li><b>2024 no tiene un solo egreso anotado.</b> La utilidad de ese año sale inflada porque solo hay ingresos. Si los gastos quedaron en otra hoja o en otro cuaderno, hay que traerlos.</li>
+      <li><b>2023 registra $61,4 millones de ingresos entre julio y noviembre sin fruta asociada.</b> Parecen pagos atrasados o liquidaciones; no los conté como producción.</li>
+      <li><b>2026 va hasta el 28 de agosto.</b> Todas las comparaciones de ese año son parciales, aunque el pico de cosecha ya pasó.</li>
+      <li><b>El peso de racimo de 2022 (7,9 kg) desentona con el resto.</b> O el conteo de racimos de ese año fue estimado, o el lote joven entró con racimos chicos.</li>
+      <li><b>La fertilización de 2024, 2025 y 2026 no está en la hoja.</b> Son $125 millones que confirmaste por fuera: $30 M, $50 M y $45 M. Metidos en las cuentas, cambian la utilidad de esos tres años.</li>
+      <li><b>Los $45 millones de abono de 2026 están comprados y sin pagar.</b> Es una cuenta por pagar viva: la caja de 2026 se ve mejor de lo que realmente está.</li>
+      <li><b>La fertilización real de los cinco años es $179 M, no los $30 M de la hoja.</b> Faltan $149 M por registrar: 2023 ($36 M contra $4,1 M anotados), 2024 ($30 M contra nada), 2025 ($50 M contra $2,9 M) y 2026 ($45 M contra $5 M). Solo 2022 coincide.</li>
+      <li><b>Sin esos $149 M, la utilidad de cuatro años está inflada</b> y el costo por tonelada se ve más barato de lo que es.</li>
+      <li><b>Todo este dashboard es secano, 2026 incluido.</b> El sistema queda habilitado en septiembre de 2026 y todavía no ha regado: llovieron 40 mm hace dos días. No hay un solo dato de producción bajo riego, ni lo habrá hasta bien entrado 2027.</li>
+      <li><b>2023 registra fruta solo hasta junio.</b> El segundo semestre aparece como pagos sin kilos ($61,4 M, unas 80 toneladas al precio del año). El total real de 2023 es más alto que el que muestran los gráficos.</li>
+      <li><b>El Módulo 1 se pagó en 2023 y sigue sin regar una palma.</b> $21,3 M parados tres años. Eso no es mala inversión: es lo que hace un seguro mientras no pasa nada.</li>
+      <li><b>La serie del IDEAM mide la mitad del agua real.</b> En los cinco meses verificables contra el pluviómetro de la finca (ago-dic 2025), la estimación se quedó en 864 mm contra 1.608 medidos. Todo lo que dependa de milímetros absolutos del IDEAM hay que tomarlo con pinzas.</li>
+      <li><b>No existe pluviometría propia antes de julio de 2025</b>, y no va a aparecer: el cuaderno lo llevan los empleados actuales. 2022, 2023 y 2024 quedan sin medición de agua, para siempre. La pregunta de qué pasó en 2024 no se puede responder con datos de lluvia.</li>
+      <li><b>El registro se interrumpió el 18 de junio de 2026.</b> Faltan julio, agosto y septiembre, que son los meses que más pesan. Retomarlo ya es lo más barato que se puede hacer por el análisis del año entrante.</li>
+      <li><b>Hay lecturas dudosas en la transcripción:</b> el 2 de febrero de 2026 lo leí como 142 mm (podría ser 42), y el día de enero con 19 mm podría ser el 5 o el 6. Conviene verificarlas contra el cuaderno.</li>
+      <li><b>La serie de lluvia llega hasta diciembre de 2025.</b> Los meses de 2026 quedan sin comparación.</li>
+      <li><b>Impuestos, retiros y pago de deudas pesan $342 millones.</b> No son costo del cultivo; conviene separarlos para calcular el costo real por tonelada.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Armado desde la hoja PALMA de CUENTAS_PALMA_BASLORA.xlsx. Área y densidad tomadas de la hoja ABONAMIENTO (70 ha, 123 palmas/ha). Las edades del cultivo se calculan asumiendo 8 y 5 años en 2022, mitad del área cada uno.
+</footer>
+
+</div>
+
+<script>
+const D = {"meta": {"ha": 70.0, "palmas": 8610, "desde": "2022-01-14", "hasta": "2026-08-28", "viajes": 323, "registros": 758}, "anual": [{"anio": 2022, "kg": 639240.0, "ton": 639.2, "racimos": 81365.0, "ingreso": 605266379.1, "otros": 16200000.0, "egreso": 367348660.0, "precio": 946.8531054064201, "pesoRacimo": 7.856449333251398, "kgHa": 9132.0, "tonHa": 9.132, "kgPalma": 74.2439024390244, "viajes": 63, "edad": 6.5, "parcial": false}, {"anio": 2023, "kg": 719869.0, "ton": 719.9, "racimos": 72434.0, "ingreso": 545395005.4000001, "otros": 61437776.0, "egreso": 151849507.0, "precio": 757.6309097905315, "pesoRacimo": 9.93827484330563, "kgHa": 10283.842857142858, "tonHa": 10.283842857142858, "kgPalma": 83.60847851335656, "viajes": 52, "edad": 7.5, "parcial": false}, {"anio": 2024, "kg": 434550.0, "ton": 434.6, "racimos": 46089.0, "ingreso": 251640410.0, "otros": 0.0, "egreso": 0.0, "precio": 579.0827522724658, "pesoRacimo": 9.428497038338866, "kgHa": 6207.857142857143, "tonHa": 6.207857142857143, "kgPalma": 50.47038327526133, "viajes": 42, "edad": 8.5, "parcial": false}, {"anio": 2025, "kg": 1074499.0, "ton": 1074.5, "racimos": 106860.0, "ingreso": 728799125.0, "otros": 0.0, "egreso": 219493620.0, "precio": 678.2687792171049, "pesoRacimo": 10.055203069436645, "kgHa": 15349.985714285714, "tonHa": 15.349985714285715, "kgPalma": 124.7966318234611, "viajes": 92, "edad": 9.5, "parcial": false}, {"anio": 2026, "kg": 1044230.0, "ton": 1044.2, "racimos": 88345.0, "ingreso": 731682170.0, "otros": 0.0, "egreso": 484540358.0, "precio": 700.6906237131666, "pesoRacimo": 11.819910577848209, "kgHa": 14917.57142857143, "tonHa": 14.91757142857143, "kgPalma": 121.28106852497096, "viajes": 74, "edad": 10.5, "parcial": true}], "mensualKg": {"2022": [7770.0, 36370.0, 106770.0, 103950.0, 145520.0, 74890.0, 56530.0, 13080.0, 22090.0, 22390.0, 17720.0, 32160.0], "2023": [82810.0, 95360.0, 237060.0, 165899.0, 119720.0, 19020.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "2024": [64710.0, 48740.0, 71470.0, 62300.0, 87070.0, 51340.0, 28970.0, 10810.0, 0.0, 0.0, 0.0, 9140.0], "2025": [22660.0, 65450.0, 215740.0, 255660.0, 262960.0, 109049.0, 91540.0, 31540.0, 12080.0, 0.0, 7820.0, 0.0], "2026": [43150.0, 128190.0, 236960.0, 250180.0, 220010.0, 96950.0, 51090.0, 17700.0, null, null, null, null]}, "precioMensual": [{"t": "2022-01", "p": 875.0, "kg": 7770.0}, {"t": "2022-02", "p": 875.0, "kg": 36370.0}, {"t": "2022-03", "p": 956.83, "kg": 106770.0}, {"t": "2022-04", "p": 1046.0, "kg": 103950.0}, {"t": "2022-05", "p": 1012.0, "kg": 145520.0}, {"t": "2022-06", "p": 1012.0, "kg": 74890.0}, {"t": "2022-07", "p": 908.0, "kg": 56530.0}, {"t": "2022-08", "p": 725.0, "kg": 13080.0}, {"t": "2022-09", "p": 725.0, "kg": 22090.0}, {"t": "2022-10", "p": 725.0, "kg": 22390.0}, {"t": "2022-11", "p": 725.0, "kg": 17720.0}, {"t": "2022-12", "p": 833.0, "kg": 32160.0}, {"t": "2023-01", "p": 778.0, "kg": 82810.0}, {"t": "2023-02", "p": 762.2899999999998, "kg": 95360.0}, {"t": "2023-03", "p": 765.0, "kg": 237060.0}, {"t": "2023-04", "p": 749.0, "kg": 165899.0}, {"t": "2023-05", "p": 740.0, "kg": 119720.0}, {"t": "2023-06", "p": 740.0, "kg": 19020.0}, {"t": "2024-01", "p": 564.1106475042498, "kg": 64710.0}, {"t": "2024-02", "p": 580.0, "kg": 48740.0}, {"t": "2024-03", "p": 580.0, "kg": 71470.0}, {"t": "2024-04", "p": 580.0, "kg": 62300.0}, {"t": "2024-05", "p": 589.0, "kg": 87070.0}, {"t": "2024-06", "p": 577.0, "kg": 51340.0}, {"t": "2024-07", "p": 580.0, "kg": 28970.0}, {"t": "2024-08", "p": 580.0, "kg": 10810.0}, {"t": "2024-12", "p": 580.0, "kg": 9140.0}, {"t": "2025-01", "p": 800.0, "kg": 22660.0}, {"t": "2025-02", "p": 800.0, "kg": 65450.0}, {"t": "2025-03", "p": 710.5766200055623, "kg": 215740.0}, {"t": "2025-04", "p": 680.0, "kg": 255660.0}, {"t": "2025-05", "p": 653.7960146029815, "kg": 262960.0}, {"t": "2025-06", "p": 625.0, "kg": 109049.0}, {"t": "2025-07", "p": 625.0, "kg": 91540.0}, {"t": "2025-08", "p": 660.0, "kg": 31540.0}, {"t": "2025-09", "p": 660.0, "kg": 12080.0}, {"t": "2025-11", "p": 650.0, "kg": 7820.0}, {"t": "2026-01", "p": 669.7450753186558, "kg": 43150.0}, {"t": "2026-02", "p": 596.0, "kg": 128190.0}, {"t": "2026-03", "p": 620.0, "kg": 236960.0}, {"t": "2026-04", "p": 731.4228155727876, "kg": 250180.0}, {"t": "2026-05", "p": 771.5529294122995, "kg": 220010.0}, {"t": "2026-06", "p": 787.0078390923156, "kg": 96950.0}, {"t": "2026-07", "p": 747.3223722842043, "kg": 51090.0}, {"t": "2026-08", "p": 692.0, "kg": 17700.0}], "estacionalidad": [7.4, 9.1, 21.5, 19.4, 21.0, 9.1, 6.0, 1.9, 1.1, 0.9, 0.9, 1.8], "egresoCat": [{"cat": "MANO DE OBRA", "v": 355392450.0}, {"cat": "IMPUESTOS", "v": 240698000.0}, {"cat": "TRANSPORTE", "v": 226425538.0}, {"cat": "RETIROS Y DEUDAS", "v": 101700000.0}, {"cat": "VARIOS", "v": 85237500.0}, {"cat": "ADMINISTRACION", "v": 56664000.0}, {"cat": "MAQUINARIA", "v": 47673000.0}, {"cat": "LABORES CULTIVO", "v": 33725000.0}, {"cat": "FERTILIZACION", "v": 30344507.0}, {"cat": "COSECHA", "v": 24952950.0}, {"cat": "COMBUSTIBLE", "v": 20419200.0}], "flujo": [{"t": "2022-01", "i": 6798750.0, "e": 4377000.0}, {"t": "2022-02", "i": 31823750.0, "e": 10238110.0}, {"t": "2022-03", "i": 102160739.10000001, "e": 15649430.0}, {"t": "2022-04", "i": 108731700.0, "e": 24340250.0}, {"t": "2022-05", "i": 147266240.0, "e": 36616320.0}, {"t": "2022-06", "i": 80288680.0, "e": 125573000.0}, {"t": "2022-07", "i": 51329240.0, "e": 57837000.0}, {"t": "2022-08", "i": 15273000.0, "e": 40937000.0}, {"t": "2022-09", "i": 16015250.0, "e": 37275550.0}, {"t": "2022-10", "i": 22142750.0, "e": 9215000.0}, {"t": "2022-11", "i": 12847000.0, "e": 0.0}, {"t": "2022-12", "i": 26789280.0, "e": 5290000.0}, {"t": "2023-01", "i": 64426180.0, "e": 1215000.0}, {"t": "2023-02", "i": 72691974.39999999, "e": 19693000.0}, {"t": "2023-03", "i": 181350900.0, "e": 50047000.0}, {"t": "2023-04", "i": 124258351.0, "e": 56780000.0}, {"t": "2023-05", "i": 88592800.0, "e": 10300000.0}, {"t": "2023-06", "i": 14074800.0, "e": 0.0}, {"t": "2023-07", "i": 20633868.0, "e": 0.0}, {"t": "2023-08", "i": 14475294.0, "e": 10000000.0}, {"t": "2023-09", "i": 10500000.0, "e": 0.0}, {"t": "2023-10", "i": 8000000.0, "e": 0.0}, {"t": "2023-11", "i": 7828614.0, "e": 0.0}, {"t": "2023-12", "i": 0.0, "e": 3814507.0}, {"t": "2024-01", "i": 36503600.0, "e": 0.0}, {"t": "2024-02", "i": 28269200.0, "e": 0.0}, {"t": "2024-03", "i": 41452600.0, "e": 0.0}, {"t": "2024-04", "i": 36134000.0, "e": 0.0}, {"t": "2024-05", "i": 51284230.0, "e": 0.0}, {"t": "2024-06", "i": 29623180.0, "e": 0.0}, {"t": "2024-07", "i": 16802600.0, "e": 0.0}, {"t": "2024-08", "i": 6269800.0, "e": 0.0}, {"t": "2024-12", "i": 5301200.0, "e": 0.0}, {"t": "2025-01", "i": 18128000.0, "e": 0.0}, {"t": "2025-02", "i": 52360000.0, "e": 4000000.0}, {"t": "2025-03", "i": 153299800.0, "e": 52780000.0}, {"t": "2025-04", "i": 173848800.0, "e": 83900620.0}, {"t": "2025-05", "i": 171922200.0, "e": 24813000.0}, {"t": "2025-06", "i": 68155625.0, "e": 10000000.0}, {"t": "2025-07", "i": 57212500.0, "e": 10000000.0}, {"t": "2025-08", "i": 20816400.0, "e": 0.0}, {"t": "2025-09", "i": 7972800.0, "e": 0.0}, {"t": "2025-10", "i": 0.0, "e": 10000000.0}, {"t": "2025-11", "i": 5083000.0, "e": 12000000.0}, {"t": "2025-12", "i": 0.0, "e": 12000000.0}, {"t": "2026-01", "i": 28899500.0, "e": 12000000.0}, {"t": "2026-02", "i": 76401240.0, "e": 28797000.0}, {"t": "2026-03", "i": 146915200.0, "e": 49034400.0}, {"t": "2026-04", "i": 182987360.0, "e": 93550000.0}, {"t": "2026-05", "i": 169749360.0, "e": 126896360.0}, {"t": "2026-06", "i": 76300410.0, "e": 153410998.0}, {"t": "2026-07", "i": 38180700.0, "e": 20851600.0}, {"t": "2026-08", "i": 12248400.0, "e": 0.0}], "fert": [{"anio": 2022, "hoja": 18350000.0, "real": 18300000.0, "fuente": "usuario", "pendiente": 0.0}, {"anio": 2023, "hoja": 4114507.0, "real": 36000000.0, "fuente": "usuario", "pendiente": 0.0}, {"anio": 2024, "hoja": 0.0, "real": 30000000.0, "fuente": "usuario", "pendiente": 0.0}, {"anio": 2025, "hoja": 2880000.0, "real": 50000000.0, "fuente": "usuario", "pendiente": 0.0}, {"anio": 2026, "hoja": 5000000.0, "real": 45000000.0, "fuente": "usuario", "pendiente": 45000000.0}], "fertGap": 148955493.0, "costos": {"porAnio": [{"anio": 2022, "prod": 221148660.0, "adm": 9890000.0, "fuera": 136310000.0, "ajusteFert": 0.0, "ing": 605266379.1, "ton": 639.24, "sinGastos": false, "parcial": false}, {"anio": 2023, "prod": 142235507.0, "adm": 9284000.0, "fuera": 330000.0, "ajusteFert": 0.0, "ing": 545395005.4000001, "ton": 719.869, "sinGastos": false, "parcial": false}, {"anio": 2024, "prod": 30000000.0, "adm": 0.0, "fuera": 0.0, "ajusteFert": 30000000.0, "ing": 251640410.0, "ton": 434.55, "sinGastos": true, "parcial": false}, {"anio": 2025, "prod": 230460620.0, "adm": 18490000.0, "fuera": 17663000.0, "ajusteFert": 47120000.0, "ing": 728799125.0, "ton": 1074.499, "sinGastos": false, "parcial": false}, {"anio": 2026, "prod": 260070358.0, "adm": 19000000.0, "fuera": 245470000.0, "ajusteFert": 40000000.0, "ing": 731682170.0, "ton": 1044.23, "sinGastos": false, "parcial": true}], "detalle": [{"bucket": "Producción", "grupo": "Mano de obra", "v": 355392450.0}, {"bucket": "Fuera del cultivo", "grupo": "Impuestos", "v": 240698000.0}, {"bucket": "Producción", "grupo": "Transporte de fruta", "v": 226425538.0}, {"bucket": "Producción", "grupo": "Fertilización", "v": 147464507.0}, {"bucket": "Fuera del cultivo", "grupo": "Pago de deudas", "v": 79000000.0}, {"bucket": "Administración", "grupo": "Administración", "v": 56664000.0}, {"bucket": "Fuera del cultivo", "grupo": "Varios personales", "v": 51175000.0}, {"bucket": "Producción", "grupo": "Maquinaria", "v": 47673000.0}, {"bucket": "Producción", "grupo": "Labores de cultivo", "v": 36297500.0}, {"bucket": "Producción", "grupo": "Varios de finca", "v": 25290000.0}, {"bucket": "Producción", "grupo": "Cosecha", "v": 24952950.0}, {"bucket": "Fuera del cultivo", "grupo": "Retiros del dueño", "v": 22700000.0}, {"bucket": "Producción", "grupo": "Combustible", "v": 20419200.0}, {"bucket": "Fuera del cultivo", "grupo": "Obra de la casa", "v": 6200000.0}]}, "clima": {"mensual": [{"t": "2022-01", "mm": 10.0, "kg": 7770.0}, {"t": "2022-02", "mm": 9.4, "kg": 36370.0}, {"t": "2022-03", "mm": 19.9, "kg": 106770.0}, {"t": "2022-04", "mm": 87.4, "kg": 103950.0}, {"t": "2022-05", "mm": 221.2, "kg": 145520.0}, {"t": "2022-06", "mm": 186.8, "kg": 74890.0}, {"t": "2022-07", "mm": 192.9, "kg": 56530.0}, {"t": "2022-08", "mm": 221.4, "kg": 13080.0}, {"t": "2022-09", "mm": 231.9, "kg": 22090.0}, {"t": "2022-10", "mm": 274.4, "kg": 22390.0}, {"t": "2022-11", "mm": 193.4, "kg": 17720.0}, {"t": "2022-12", "mm": 92.1, "kg": 32160.0}, {"t": "2023-01", "mm": 6.8, "kg": 82810.0}, {"t": "2023-02", "mm": 6.7, "kg": 95360.0}, {"t": "2023-03", "mm": 10.9, "kg": 237060.0}, {"t": "2023-04", "mm": 54.9, "kg": 165899.0}, {"t": "2023-05", "mm": 141.5, "kg": 119720.0}, {"t": "2023-06", "mm": 115.5, "kg": 19020.0}, {"t": "2023-07", "mm": 121.4, "kg": 0.0}, {"t": "2023-08", "mm": 140.1, "kg": 0.0}, {"t": "2023-09", "mm": 146.2, "kg": 0.0}, {"t": "2023-10", "mm": 175.3, "kg": 0.0}, {"t": "2023-11", "mm": 120.4, "kg": 0.0}, {"t": "2023-12", "mm": 56.8, "kg": 0.0}, {"t": "2024-01", "mm": 7.7, "kg": 64710.0}, {"t": "2024-02", "mm": 4.8, "kg": 48740.0}, {"t": "2024-03", "mm": 10.9, "kg": 71470.0}, {"t": "2024-04", "mm": 55.8, "kg": 62300.0}, {"t": "2024-05", "mm": 135.0, "kg": 87070.0}, {"t": "2024-06", "mm": 112.6, "kg": 51340.0}, {"t": "2024-07", "mm": 119.1, "kg": 28970.0}, {"t": "2024-08", "mm": 136.5, "kg": 10810.0}, {"t": "2024-09", "mm": 144.7, "kg": 0.0}, {"t": "2024-10", "mm": 168.5, "kg": 0.0}, {"t": "2024-11", "mm": 116.1, "kg": 0.0}, {"t": "2024-12", "mm": 55.5, "kg": 9140.0}, {"t": "2025-01", "mm": 8.7, "kg": 22660.0}, {"t": "2025-02", "mm": 7.5, "kg": 65450.0}, {"t": "2025-03", "mm": 17.8, "kg": 215740.0}, {"t": "2025-04", "mm": 74.1, "kg": 255660.0}, {"t": "2025-05", "mm": 188.0, "kg": 262960.0}, {"t": "2025-06", "mm": 157.6, "kg": 109049.0}, {"t": "2025-07", "mm": 165.4, "kg": 91540.0}, {"t": "2025-08", "mm": 191.8, "kg": 31540.0}, {"t": "2025-09", "mm": 197.7, "kg": 12080.0}, {"t": "2025-10", "mm": 232.6, "kg": 0.0}, {"t": "2025-11", "mm": 161.9, "kg": 7820.0}, {"t": "2025-12", "mm": 80.3, "kg": 0.0}, {"t": "2026-01", "mm": null, "kg": 43150.0}, {"t": "2026-02", "mm": null, "kg": 128190.0}, {"t": "2026-03", "mm": null, "kg": 236960.0}, {"t": "2026-04", "mm": null, "kg": 250180.0}, {"t": "2026-05", "mm": null, "kg": 220010.0}, {"t": "2026-06", "mm": null, "kg": 96950.0}, {"t": "2026-07", "mm": null, "kg": 51090.0}, {"t": "2026-08", "mm": null, "kg": 17700.0}], "climaLluvia": [10.157142857142857, 8.214285714285714, 16.085714285714285, 74.52857142857144, 187.77142857142857, 156.64285714285714, 164.20000000000002, 188.6142857142857, 196.82857142857142, 232.3857142857143, 161.79999999999998, 78.3], "climaProd": [44220.0, 74822.0, 173600.0, 167597.8, 167056.0, 70249.8, 45626.0, 14626.0, 8542.5, 5597.5, 6385.0, 10325.0], "anual": [{"anio": 2016, "mm": 1419.2, "def": 515.0, "secos": 3}, {"anio": 2017, "mm": 1430.2, "def": 515.8, "secos": 3}, {"anio": 2018, "mm": 1402.1, "def": 516.9, "secos": 3}, {"anio": 2019, "mm": 1357.0, "def": 525.0, "secos": 3}, {"anio": 2020, "mm": 1756.1, "def": 476.0, "secos": 3}, {"anio": 2021, "mm": 1827.7, "def": 466.0, "secos": 3}, {"anio": 2022, "mm": 1740.8, "def": 481.2, "secos": 3}, {"anio": 2023, "mm": 1096.5, "def": 626.6, "secos": 3}, {"anio": 2024, "mm": 1067.2, "def": 646.0, "secos": 3}, {"anio": 2025, "mm": 1483.4, "def": 511.6, "secos": 3}], "eto": 140.0, "cruce": [{"cosecha": 2023, "tonHa": 10.283842857142858, "mmPrev": 1740.8, "defPrev": 481.2, "fertPrev": 18300000.0, "parcial": false}, {"cosecha": 2024, "tonHa": 6.207857142857143, "mmPrev": 1096.5, "defPrev": 626.6, "fertPrev": 36000000.0, "parcial": false}, {"cosecha": 2025, "tonHa": 15.349985714285715, "mmPrev": 1067.2, "defPrev": 646.0, "fertPrev": 30000000.0, "parcial": false}, {"cosecha": 2026, "tonHa": 14.91757142857143, "mmPrev": 1483.4, "defPrev": 511.6, "fertPrev": 50000000.0, "parcial": true}], "lag": [{"L": 0, "r": -0.3890591767223517}, {"L": 1, "r": -0.7984813476555417}, {"L": 2, "r": -0.9386790847640747}, {"L": 3, "r": -0.7578831655845849}, {"L": 4, "r": -0.33730194452085643}, {"L": 5, "r": 0.2071567381780057}, {"L": 6, "r": 0.5707270718465122}, {"L": 7, "r": 0.7461792043307426}, {"L": 8, "r": 0.7033979006529734}, {"L": 9, "r": 0.5763150124191725}, {"L": 10, "r": 0.38933441150028997}, {"L": 11, "r": 0.028294380319713135}]}, "fertConfirmada": true, "pluvio": [{"t": "2025-07", "mm": 15, "dias": 1, "ideam": 165.4}, {"t": "2025-08", "mm": 382, "dias": 13, "ideam": 191.8}, {"t": "2025-09", "mm": 359, "dias": 9, "ideam": 197.7}, {"t": "2025-10", "mm": 390, "dias": 14, "ideam": 232.6}, {"t": "2025-11", "mm": 400, "dias": 11, "ideam": 161.9}, {"t": "2025-12", "mm": 77, "dias": 6, "ideam": 80.3}, {"t": "2026-01", "mm": 93, "dias": 6, "ideam": null}, {"t": "2026-02", "mm": 212, "dias": 5, "ideam": null}, {"t": "2026-04", "mm": 22, "dias": 2, "ideam": null}, {"t": "2026-05", "mm": 78, "dias": 4, "ideam": null}, {"t": "2026-06", "mm": 174, "dias": 10, "ideam": null}, {"t": "2026-07", "mm": 213, "dias": 5, "ideam": null}, {"t": "2026-08", "mm": 127, "dias": 4, "ideam": null}, {"t": "2026-09", "mm": 40, "dias": 1, "ideam": null, "parcial": "al 11"}], "sequia": {"normal": 12.816914285714287, "perdidaT": 462.63400000000007, "perdidaP": 233752305.37600005, "palmas": 80, "kgPalma": 124.7966318234611, "palmasP": 5044419.63053194, "margen": 505264}, "lluviaFull": {"2020-01": 14.0, "2020-02": 10.6, "2020-03": 17.7, "2020-04": 88.8, "2020-05": 224.5, "2020-06": 185.6, "2020-07": 195.1, "2020-08": 225.9, "2020-09": 232.7, "2020-10": 275.7, "2020-11": 192.6, "2020-12": 92.9, "2021-01": 13.0, "2021-02": 8.7, "2021-03": 19.8, "2021-04": 93.5, "2021-05": 231.8, "2021-06": 193.6, "2021-07": 205.4, "2021-08": 232.2, "2021-09": 242.4, "2021-10": 287.8, "2021-11": 200.5, "2021-12": 99.0, "2022-01": 10.0, "2022-02": 9.4, "2022-03": 19.9, "2022-04": 87.4, "2022-05": 221.2, "2022-06": 186.8, "2022-07": 192.9, "2022-08": 221.4, "2022-09": 231.9, "2022-10": 274.4, "2022-11": 193.4, "2022-12": 92.1, "2023-01": 6.8, "2023-02": 6.7, "2023-03": 10.9, "2023-04": 54.9, "2023-05": 141.5, "2023-06": 115.5, "2023-07": 121.4, "2023-08": 140.1, "2023-09": 146.2, "2023-10": 175.3, "2023-11": 120.4, "2023-12": 56.8, "2024-01": 7.7, "2024-02": 4.8, "2024-03": 10.9, "2024-04": 55.8, "2024-05": 135.0, "2024-06": 112.6, "2024-07": 119.1, "2024-08": 136.5, "2024-09": 144.7, "2024-10": 168.5, "2024-11": 116.1, "2024-12": 55.5, "2025-01": 8.7, "2025-02": 7.5, "2025-03": 17.8, "2025-04": 74.1, "2025-05": 188.0, "2025-06": 157.6, "2025-07": 165.4, "2025-08": 191.8, "2025-09": 197.7, "2025-10": 232.6, "2025-11": 161.9, "2025-12": 80.3}};
+
+/* ---------- helpers ---------- */
+const MES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const nf = (v,d=0)=>v.toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
+const money = v => '$'+nf(Math.round(v));
+const mill = v => '$'+nf(v/1e6,0)+' M';
+const YC = {2022:'var(--y22)',2023:'var(--y23)',2024:'var(--y24)',2025:'var(--y25)',2026:'var(--y26)'};
+const el = (t,a={},kids=[])=>{const n=document.createElementNS('http://www.w3.org/2000/svg',t);
+  for(const k in a) n.setAttribute(k,a[k]); kids.forEach(c=>n.appendChild(c)); return n;};
+const svg = (w,h)=>el('svg',{viewBox:`0 0 ${w} ${h}`,role:'img'});
+const txt = (x,y,s,cls='tk',anchor='middle',extra={})=>{
+  const t=el('text',Object.assign({x,y,'text-anchor':anchor,class:cls},extra));
+  t.textContent=s; return t;};
+function ticks(max,n=4){
+  const raw=max/n, mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=raw)||10*mag;
+  const out=[]; for(let v=0;v<=max*1.0001;v+=step) out.push(v);
+  if(out[out.length-1]<max) out.push(out[out.length-1]+step);
+  return out;
+}
+
+/* ---------- KPIs ---------- */
+const A = D.anual;
+const tot = A.reduce((a,r)=>({kg:a.kg+r.kg,rac:a.rac+r.racimos,ing:a.ing+r.ingreso+r.otros,
+  eg:a.eg+r.egreso,viajes:a.viajes+r.viajes}),{kg:0,rac:0,ing:0,eg:0,viajes:0});
+const best = A.reduce((a,b)=>b.kg>a.kg?b:a);
+const kpis=[
+  ['Fruta vendida', nf(tot.kg/1000,0), ' t', 'entre enero de 2022 y agosto de 2026'],
+  ['Ingresos', nf(tot.ing/1e6,0), ' M', 'pesos facturados, fruta y otros'],
+  ['Egresos', nf(tot.eg/1e6,0), ' M', 'lo que alcanzó a registrarse'],
+  ['Utilidad', nf((tot.ing-tot.eg)/1e6,0), ' M', 'con 2024 sin gastos anotados'],
+  ['Mejor año', nf(best.kg/1000,0), ' t', best.anio+', o sea '+nf(best.tonHa,1)+' t por hectárea'],
+  ['Precio promedio', nf(tot.ing/tot.kg,0), ' $/kg', 'ponderado por kilo vendido']
+];
+document.getElementById('kpis').innerHTML = kpis.map(k=>
+  `<div class="kpi"><div class="v">${k[1]}<span class="u">${k[2]}</span></div><div class="k">${k[0]} · ${k[3]}</div></div>`
+).join('');
+document.getElementById('stamp').textContent =
+  `${D.meta.registros} registros · ${D.meta.viajes} despachos de fruta · ${D.meta.desde} a ${D.meta.hasta}`;
+document.getElementById('kpinote').innerHTML =
+  `Cada tonelada vendida dejó en promedio <b>${money(tot.ing/(tot.kg/1000))}</b> de ingreso. `+
+  `El cultivo despachó <b>${nf(tot.rac)}</b> racimos en total, con un peso medio de <b>${nf(tot.kg/tot.rac,1).replace('.',',')} kg</b>.`;
+
+/* ---------- 1. mensual por año ---------- */
+const years=[2022,2023,2024,2025,2026];
+const on = new Set(years);
+function chMes(){
+  const W=900,H=380,P={l:58,r:16,t:14,b:34};
+  const s=svg(W,H); const max=Math.max(...years.flatMap(y=>D.mensualKg[y].map(v=>v||0)));
+  const T=ticks(max,5), top=T[T.length-1];
+  const X=i=>P.l+i*(W-P.l-P.r)/11, Y=v=>H-P.b-(v/top)*(H-P.b-P.t);
+  T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,Y(t)+4,nf(t/1000)+' t','tk','end'));});
+  MES.forEach((m,i)=>s.appendChild(txt(X(i),H-12,m,'tkb')));
+  years.forEach(y=>{
+    if(!on.has(y)) return;
+    const v=D.mensualKg[y]; let d='',started=false;
+    v.forEach((p,i)=>{ if(p===null) return;
+      d += (started?'L':'M')+X(i)+' '+Y(p); started=true; });
+    s.appendChild(el('path',{d,fill:'none',stroke:YC[y],'stroke-width':2.4,
+      'stroke-linejoin':'round','stroke-linecap':'round'}));
+    v.forEach((p,i)=>{ if(p===null) return;
+      const c=el('circle',{cx:X(i),cy:Y(p),r:3.2,fill:'var(--bg)',stroke:YC[y],'stroke-width':2});
+      const tt=el('title',{}); tt.textContent=`${MES[i]} ${y}: ${nf(p)} kg`; c.appendChild(tt);
+      s.appendChild(c);
+    });
+    const li=v.map((p,i)=>[p,i]).filter(a=>a[0]!==null).pop();
+    s.appendChild(txt(X(li[1])+9,Y(li[0])+4,String(y),'vlab','start',{fill:YC[y]}));
+  });
+  const c=document.getElementById('chMes'); c.innerHTML=''; c.appendChild(s);
+}
+document.getElementById('legMes').innerHTML = years.map(y=>
+  `<button class="chip" data-y="${y}" aria-pressed="true" style="color:${YC[y]}"><span class="dot"></span>${y}</button>`).join('');
+document.getElementById('legMes').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  const y=+b.dataset.y; on.has(y)?on.delete(y):on.add(y);
+  b.setAttribute('aria-pressed',on.has(y));
+  chMes();
+});
+chMes();
+
+/* ---------- 2. estacionalidad ---------- */
+(function(){
+  const W=520,H=320,P={l:42,r:14,t:16,b:34};
+  const s=svg(W,H), v=D.estacionalidad, max=Math.max(...v);
+  const T=ticks(max,4), top=T[T.length-1];
+  const bw=(W-P.l-P.r)/12;
+  T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-7,y+4,nf(t)+'%','tk','end'));});
+  v.forEach((p,i)=>{
+    const h=(p/top)*(H-P.b-P.t), x=P.l+i*bw+bw*0.16, w=bw*0.68;
+    const col = p>=15?'var(--fruit)':(p>=7?'var(--amber)':'var(--frond)');
+    const r=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:col,opacity:p>=15?1:.72});
+    const tt=el('title',{}); tt.textContent=`${MES[i]}: ${nf(p,1)}% de la cosecha del año`; r.appendChild(tt);
+    s.appendChild(r);
+    s.appendChild(txt(P.l+i*bw+bw/2,H-12,MES[i][0],'tkb'));
+  });
+  s.appendChild(txt(P.l,P.t-2,'Reparto de la cosecha anual','tkb','start'));
+  document.getElementById('chEst').appendChild(s);
+  const pico=D.estacionalidad.slice(2,5).reduce((a,b)=>a+b,0);
+  document.getElementById('estnote').innerHTML =
+    `<b>Marzo, abril y mayo concentran el ${nf(pico,0)}% de la cosecha.</b> `+
+    `De septiembre a diciembre entra menos del 5%: son cuatro meses de gastos sin caja, y ahí es donde el flujo se pone apretado.`;
+})();
+
+/* ---------- 2b. flujo mensual ingresos vs egresos ---------- */
+(function(){
+  const W=520,H=320,P={l:46,r:14,t:16,b:34};
+  const s=svg(W,H), f=D.flujo;
+  const max=Math.max(...f.map(r=>Math.max(r.i,r.e)));
+  const T=ticks(max,3), top=T[T.length-1];
+  const bw=(W-P.l-P.r)/f.length;
+  T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-7,y+4,nf(t/1e6)+'M','tk','end'));});
+  f.forEach((r,i)=>{
+    const x=P.l+i*bw;
+    const hi=(r.i/top)*(H-P.b-P.t), he=(r.e/top)*(H-P.b-P.t);
+    const a=el('rect',{x:x+bw*.08,y:H-P.b-hi,width:bw*.44,height:hi,fill:'var(--frond)'});
+    const b=el('rect',{x:x+bw*.52,y:H-P.b-he,width:bw*.44,height:he,fill:'var(--fruit)',opacity:.85});
+    const t1=el('title',{}); t1.textContent=`${r.t} · entró ${money(r.i)}`; a.appendChild(t1);
+    const t2=el('title',{}); t2.textContent=`${r.t} · salió ${money(r.e)}`; b.appendChild(t2);
+    s.appendChild(a); s.appendChild(b);
+    if(r.t.slice(5)==='01') s.appendChild(txt(x+bw/2,H-12,r.t.slice(0,4),'tkb'));
+  });
+  s.appendChild(txt(P.l,P.t-2,'Entradas y salidas por mes','tkb','start'));
+  document.getElementById('chFlujo').appendChild(s);
+})();
+
+/* ---------- 3. rendimiento vs edad ---------- */
+(function(){
+  const W=900,H=400,P={l:60,r:60,t:24,b:58};
+  const s=svg(W,H);
+  const max=Math.max(...A.map(r=>r.tonHa)), T=ticks(max,4), top=T[T.length-1];
+  const bw=(W-P.l-P.r)/A.length;
+  T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,y+4,nf(t)+' t/ha','tk','end'));});
+  A.forEach((r,i)=>{
+    const h=(r.tonHa/top)*(H-P.b-P.t), x=P.l+i*bw+bw*.2, w=bw*.6;
+    const rect=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:YC[r.anio],opacity:r.parcial?.55:1});
+    const tt=el('title',{}); tt.textContent=`${r.anio}: ${nf(r.tonHa,1)} t/ha · ${nf(r.kg)} kg`; rect.appendChild(tt);
+    s.appendChild(rect);
+    if(r.parcial) s.appendChild(el('rect',{x,y:H-P.b-h,width:w,height:h,fill:'none',
+      stroke:YC[r.anio],'stroke-width':1.5,'stroke-dasharray':'4 3'}));
+    s.appendChild(txt(x+w/2,H-P.b-h-9,nf(r.tonHa,1),'vlab'));
+    s.appendChild(txt(x+w/2,H-34,String(r.anio),'tkb'));
+    s.appendChild(txt(x+w/2,H-16,nf(r.edad,1).replace('.',',')+' años','tk'));
+  });
+  const pmax=Math.max(...A.map(r=>r.pesoRacimo))*1.25;
+  const Yp=v=>H-P.b-(v/pmax)*(H-P.b-P.t);
+  let d='';
+  A.forEach((r,i)=>{ d+=(i?'L':'M')+(P.l+i*bw+bw/2)+' '+Yp(r.pesoRacimo); });
+  s.appendChild(el('path',{d,fill:'none',stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'1 5','stroke-linecap':'round'}));
+  A.forEach((r,i)=>{
+    const cx=P.l+i*bw+bw/2, cy=Yp(r.pesoRacimo);
+    const c=el('circle',{cx,cy,r:4.5,fill:'var(--bg)',stroke:'var(--ink)','stroke-width':2});
+    const tt=el('title',{}); tt.textContent=`${r.anio}: racimo de ${nf(r.pesoRacimo,1)} kg`; c.appendChild(tt);
+    s.appendChild(c);
+    s.appendChild(txt(cx,cy-11,nf(r.pesoRacimo,1).replace('.',',')+' kg','vlab'));
+  });
+  s.appendChild(txt(W-P.r+8,P.t+4,'peso del','tk','start'));
+  s.appendChild(txt(W-P.r+8,P.t+18,'racimo','tk','start'));
+  document.getElementById('chRend').appendChild(s);
+  const y25=A.find(r=>r.anio===2025), y24=A.find(r=>r.anio===2024), y22=A.find(r=>r.anio===2022);
+  document.getElementById('rendnote').innerHTML =
+    `El lote pasó de <b>${nf(y22.tonHa,1).replace('.',',')} t/ha</b> a <b>${nf(y25.tonHa,1).replace('.',',')} t/ha</b> en cuatro años, `+
+    `justo cuando la palma entra a su mejor edad. <b>2024 rompe la curva</b> con ${nf(y24.tonHa,1).replace('.',',')} t/ha: `+
+    `cayó el rendimiento y el racimo se mantuvo en ${nf(y24.pesoRacimo,1).replace('.',',')} kg, lo que apunta a menos racimos por palma antes que a racimos más pequeños. `+
+    `Un cultivo de esta edad bien manejado en Colombia anda entre 18 y 24 t/ha, así que todavía hay techo.`;
+})();
+
+/* ---------- 3b. fertilizacion vs cosecha siguiente ---------- */
+(function(){
+  const F=D.fert, PLAN=83e6;
+  const W=900,H=400,P={l:62,r:66,t:30,b:62};
+  const s=svg(W,H);
+  const max=Math.max(PLAN,...F.map(r=>r.real))*1.12;
+  const T=ticks(max/1e6,4), top=T[T.length-1]*1e6;
+  const bw=(W-P.l-P.r)/F.length;
+  T.forEach(t=>{const y=H-P.b-(t*1e6/top)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,y+4,'$'+nf(t)+' M','tk','end'));});
+  const yPlan=H-P.b-(PLAN/top)*(H-P.b-P.t);
+  s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:yPlan,y2:yPlan,stroke:'var(--ink2)',
+    'stroke-width':1.5,'stroke-dasharray':'7 5'}));
+  s.appendChild(txt(W-P.r-2,yPlan-7,'ronda completa del plan · $83 M','tkb','end'));
+  const ymax=Math.max(...A.map(r=>r.tonHa))*1.3, Yt=v=>H-P.b-(v/ymax)*(H-P.b-P.t);
+  const next=y=>A.find(r=>r.anio===y+1);
+  let d='',pts=[];
+  F.forEach((r,i)=>{
+    const x=P.l+i*bw+bw*.22, w=bw*.56, h=(r.real/top)*(H-P.b-P.t);
+    const col = r.real>=PLAN*.6 ? 'var(--frond)' : (r.real>=PLAN*.3 ? 'var(--amber)' : 'var(--fruit)');
+    const rect=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:col,opacity:r.fuente==='hoja'?.45:.95});
+    const tt=el('title',{}); tt.textContent=`${r.anio}: ${money(r.real)} en fertilización`+
+      (r.fuente==='hoja'?' (solo lo anotado en la hoja)':' (cifra real)'); rect.appendChild(tt);
+    s.appendChild(rect);
+    if(r.fuente==='hoja') s.appendChild(el('rect',{x,y:H-P.b-h,width:w,height:h,fill:'none',
+      stroke:col,'stroke-width':1.5,'stroke-dasharray':'4 3'}));
+    s.appendChild(txt(x+w/2,H-P.b-h-9,nf(r.real/1e6)+' M','vlab'));
+    s.appendChild(txt(x+w/2,H-42,String(r.anio),'tkb'));
+    s.appendChild(txt(x+w/2,H-26,r.fuente==='hoja'?'solo lo anotado':'cifra real','tk'));
+    const n=next(r.anio);
+    if(n){ const cx=x+w/2, cy=Yt(n.tonHa); pts.push([cx,cy,n]);
+      s.appendChild(txt(x+w/2,H-10,'cosecha '+n.anio,'tk','middle',{fill:'var(--ink3)'})); }
+    else s.appendChild(txt(x+w/2,H-10,'cosecha 2027','tk','middle',{fill:'var(--ink3)'}));
+  });
+  pts.forEach((p,i)=>{ d+=(i?'L':'M')+p[0]+' '+p[1]; });
+  s.appendChild(el('path',{d,fill:'none',stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'1 5','stroke-linecap':'round'}));
+  pts.forEach(p=>{
+    const c=el('circle',{cx:p[0],cy:p[1],r:5,fill:'var(--bg)',stroke:'var(--ink)','stroke-width':2});
+    const tt=el('title',{}); tt.textContent=`Cosecha ${p[2].anio}: ${nf(p[2].tonHa,1)} t/ha`; c.appendChild(tt);
+    s.appendChild(c);
+    s.appendChild(txt(p[0],p[1]-12,nf(p[2].tonHa,1)+' t/ha'+(p[2].parcial?'*':''),'vlab'));
+  });
+  s.appendChild(txt(W-P.r+8,P.t-6,'t/ha del','tk','start'));
+  s.appendChild(txt(W-P.r+8,P.t+8,'año siguiente','tk','start'));
+  s.appendChild(txt(P.l,P.t-12,'* 2026 va hasta agosto','tk','start'));
+  document.getElementById('chFert').appendChild(s);
+
+  const f23=F.find(r=>r.anio===2023), f24=F.find(r=>r.anio===2024),
+        f25=F.find(r=>r.anio===2025), f26=F.find(r=>r.anio===2026);
+  document.getElementById('fertnote').innerHTML =
+    `<b>El abono no ordena estas cosechas.</b> 2023 fue el segundo año de mayor inversión (${mill(f23.real)}) `+
+    `y la cosecha siguiente fue la peor de todas: 6,2 t/ha. 2024 recibió menos (${mill(f24.real)}) y la siguiente fue la mejor: 15,3 t/ha. `+
+    `Y subir a ${mill(f25.real)} en 2025 dejó 2026 en 14,9 t/ha, con más lluvia de por medio. `+
+    `Si el abono fuera el motor principal, estos cuatro puntos irían en fila, y no van. `+
+    `Lo que sí queda claro es que de 2023 en adelante la hoja registra ${mill(f23.hoja+f24.hoja+f25.hoja+f26.hoja)} de un gasto real de `+
+    `${mill(f23.real+f24.real+f25.real+f26.real)}. Los ${mill(f26.real)} de 2026 siguen sin pagar.`;
+})();
+
+/* ---------- 3c. productividad real ---------- */
+(function(){
+  const C=D.costos, R=C.porAnio;
+  const sum=k=>R.reduce((a,b)=>a+b[k],0);
+  const PROD=sum('prod'), ADM=sum('adm'), FUERA=sum('fuera'), ING=tot.ing;
+  // años con costos confiables (2024 solo tiene el abono)
+  const OK=R.filter(r=>!r.sinGastos);
+  const tonOK=OK.reduce((a,b)=>a+b.ton,0), prodOK=OK.reduce((a,b)=>a+b.prod,0);
+  const admOK=OK.reduce((a,b)=>a+b.adm,0), ingOK=OK.reduce((a,b)=>a+b.ing,0);
+  const costoT=prodOK/tonOK, ingT=ingOK/tonOK, margenT=ingT-costoT;
+  const margenHa=(ingOK-prodOK-admOK)/70/OK.length;
+
+  document.getElementById('kpiProd').innerHTML=[
+    ['Cuesta producir', nf(costoT/1000,0), ' mil', 'pesos por tonelada de fruta'],
+    ['Pagan por ella', nf(ingT/1000,0), ' mil', 'pesos por tonelada, promedio'],
+    ['Queda del cultivo', nf(margenT/1000,0), ' mil', 'por tonelada, antes de impuestos y retiros'],
+    ['Margen del cultivo', nf(margenHa/1e6,1), ' M', 'por hectárea cada año'],
+    ['Fuera del cultivo', nf(FUERA/1e6,0), ' M', 'impuestos, retiros, deudas y gastos personales'],
+    ['Precio de equilibrio', nf(costoT/1000,0), ' $/kg', 'por debajo de ahí el cultivo pierde plata']
+  ].map(k=>`<div class="kpi"><div class="v">${k[1]}<span class="u">${k[2]}</span></div><div class="k">${k[0]} · ${k[3]}</div></div>`).join('');
+
+  /* cascada */
+  (function(){
+    const W=900,H=400,P={l:66,r:16,t:26,b:70};
+    const s=svg(W,H);
+    const steps=[
+      {t:'Ingresos', v:ING, tipo:'base', c:'var(--frond)'},
+      {t:'Costo de producir', v:-PROD, tipo:'delta', c:'var(--water)'},
+      {t:'Margen del cultivo', v:ING-PROD, tipo:'sub', c:'var(--frond)'},
+      {t:'Administración', v:-ADM, tipo:'delta', c:'var(--water)'},
+      {t:'Fuera del cultivo', v:-FUERA, tipo:'delta', c:'var(--fruit)'},
+      {t:'Queda', v:ING-PROD-ADM-FUERA, tipo:'sub', c:'var(--amber)'}
+    ];
+    const max=ING*1.05, T=ticks(max/1e6,4), top=T[T.length-1]*1e6;
+    const Y=v=>H-P.b-(v/top)*(H-P.b-P.t), bw=(W-P.l-P.r)/steps.length;
+    T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t*1e6),y2:Y(t*1e6),class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-8,Y(t*1e6)+4,'$'+nf(t)+' M','tk','end'));});
+    let run=0;
+    steps.forEach((st,i)=>{
+      const x=P.l+i*bw+bw*.18, w=bw*.64;
+      let y0,y1,val;
+      if(st.tipo==='delta'){ val=Math.abs(st.v); y0=Y(run); run+=st.v; y1=Y(run); }
+      else { val=st.v; run=st.v; y0=Y(0); y1=Y(st.v); }
+      const rect=el('rect',{x,y:Math.min(y0,y1),width:w,height:Math.max(Math.abs(y1-y0),2),
+        fill:st.c,opacity:st.tipo==='delta'?.85:1});
+      const tt=el('title',{}); tt.textContent=`${st.t}: ${money(Math.abs(st.v))}`; rect.appendChild(tt);
+      s.appendChild(rect);
+      s.appendChild(txt(x+w/2,Math.min(y0,y1)-8,(st.tipo==='delta'?'−':'')+nf(val/1e6)+' M','vlab'));
+      if(i<steps.length-1) s.appendChild(el('line',{x1:x+w,x2:P.l+(i+1)*bw+bw*.18,
+        y1:Y(run),y2:Y(run),stroke:'var(--ink3)','stroke-width':1,'stroke-dasharray':'3 3'}));
+      const words=st.t.split(' ');
+      words.forEach((wd,k)=>s.appendChild(txt(x+w/2,H-P.b+20+k*15,wd,'tkb')));
+    });
+    document.getElementById('chCascada').appendChild(s);
+    document.getElementById('cascnote').innerHTML=
+      `De cada <b>$100</b> que entró, <b>$${nf(PROD/ING*100,0)}</b> se fueron en producir la fruta, `+
+      `<b>$${nf(ADM/ING*100,0)}</b> en administrar y <b>$${nf(FUERA/ING*100,0)}</b> salieron por fuera del cultivo. `+
+      `El cultivo como negocio deja <b>${mill(ING-PROD-ADM)}</b> en cinco años; lo que llega al final son `+
+      `<b>${mill(ING-PROD-ADM-FUERA)}</b>. Ojo: a 2024 le faltan todos los egresos salvo el abono, así que el costo real de producir es mayor que el de esta cascada.`;
+  })();
+
+  /* costo vs ingreso por tonelada, por año */
+  (function(){
+    const W=520,H=340,P={l:58,r:14,t:26,b:54};
+    const s=svg(W,H);
+    const max=Math.max(...R.map(r=>r.ing/r.ton))*1.15;
+    const T=ticks(max/1000,4), top=T[T.length-1]*1000, bw=(W-P.l-P.r)/R.length;
+    T.forEach(t=>{const y=H-P.b-(t*1000/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-7,y+4,'$'+nf(t)+'k','tk','end'));});
+    R.forEach((r,i)=>{
+      const x=P.l+i*bw, it=r.ing/r.ton, ct=r.prod/r.ton;
+      const hi=(it/top)*(H-P.b-P.t), hc=(ct/top)*(H-P.b-P.t);
+      const a=el('rect',{x:x+bw*.16,y:H-P.b-hi,width:bw*.32,height:hi,fill:'var(--frond)'});
+      const b=el('rect',{x:x+bw*.52,y:H-P.b-hc,width:bw*.32,height:hc,
+        fill:'var(--water)',opacity:r.sinGastos?.35:.9});
+      const t1=el('title',{}); t1.textContent=`${r.anio}: ingreso ${money(it)} por tonelada`; a.appendChild(t1);
+      const t2=el('title',{}); t2.textContent=`${r.anio}: costo ${money(ct)} por tonelada`+
+        (r.sinGastos?' (incompleto)':''); b.appendChild(t2);
+      s.appendChild(a); s.appendChild(b);
+      if(r.sinGastos) s.appendChild(el('rect',{x:x+bw*.52,y:H-P.b-hc,width:bw*.32,height:hc,
+        fill:'none',stroke:'var(--water)','stroke-width':1.5,'stroke-dasharray':'4 3'}));
+      s.appendChild(txt(x+bw/2,H-34,String(r.anio),'tkb'));
+      s.appendChild(txt(x+bw/2,H-16,r.sinGastos?'sin gastos':'+'+nf((it-ct)/1000)+'k','tk','middle',
+        {fill:r.sinGastos?'var(--amber)':'var(--frond)'}));
+    });
+    s.appendChild(txt(P.l,P.t-10,'Por tonelada: lo que entra y lo que cuesta','tkb','start'));
+    document.getElementById('chUnit').appendChild(s);
+  })();
+
+  /* composición del costo de producir */
+  (function(){
+    const g=C.detalle.filter(r=>r.bucket==='Producción').sort((a,b)=>b.v-a.v);
+    const W=520,rowH=30,P={l:140,r:62,t:26,b:10};
+    const H=P.t+P.b+g.length*rowH, s=svg(W,H), max=g[0].v;
+    s.appendChild(txt(0,14,'Dentro del costo de producir','tkb','start'));
+    g.forEach((r,i)=>{
+      const y=P.t+i*rowH, w=(r.v/max)*(W-P.l-P.r);
+      const rect=el('rect',{x:P.l,y:y+5,width:Math.max(w,1),height:rowH-14,fill:'var(--water)',opacity:.88});
+      const tt=el('title',{}); tt.textContent=`${r.grupo}: ${money(r.v)} · ${money(r.v/tonOK)} por tonelada`;
+      rect.appendChild(tt); s.appendChild(rect);
+      s.appendChild(txt(P.l-10,y+rowH/2+2,r.grupo,'tkb','end'));
+      s.appendChild(txt(P.l+w+8,y+rowH/2+2,nf(r.v/1e6)+' M','vlab','start'));
+    });
+    document.getElementById('chComp').appendChild(s);
+    const mo=g.find(r=>r.grupo==='Mano de obra'), tr=g.find(r=>r.grupo==='Transporte de fruta');
+    document.getElementById('unitnote').innerHTML=
+      `Sacando 2024, producir una tonelada cuesta <b>${money(costoT)}</b> y la pagan a <b>${money(ingT)}</b>: `+
+      `quedan <b>${money(margenT)}</b> por tonelada, un margen del <b>${nf(margenT/ingT*100,0)}%</b>. `+
+      `Mano de obra (${mill(mo.v)}) y transporte de fruta (${mill(tr.v)}) son el `+
+      `<b>${nf((mo.v+tr.v)/PROD*100,0)}%</b> del costo de producir — más que todo lo demás junto. `+
+      `El transporte solo se lleva <b>${money(tr.v/tonOK)}</b> de cada tonelada, y es el rubro donde una negociación de flete se siente de inmediato.`;
+  })();
+})();
+
+/* ---------- 3d. lluvia y desfase ---------- */
+(function(){
+  const K=D.clima;
+
+  /* serie mensual lluvia vs cosecha, con desfase ajustable */
+  (function(){
+    const M=K.mensual, FULL=D.lluviaFull;
+    const shift=(t,L)=>{ let y=+t.slice(0,4), m=+t.slice(5)-L;
+      while(m<1){m+=12;y--;} while(m>12){m-=12;y++;}
+      return y+'-'+String(m).padStart(2,'0'); };
+    const serie=L=>M.map(r=>({t:r.t, kg:r.kg, mm: FULL[shift(r.t,L)] ?? null}));
+    const corr=a=>{ const p=a.filter(r=>r.kg!==null&&r.mm!==null);
+      if(p.length<12) return null;
+      const n=p.length, mx=p.reduce((s,r)=>s+r.mm,0)/n, my=p.reduce((s,r)=>s+r.kg,0)/n;
+      let sxy=0,sx=0,sy=0;
+      p.forEach(r=>{const dx=r.mm-mx,dy=r.kg-my; sxy+=dx*dy; sx+=dx*dx; sy+=dy*dy;});
+      return sxy/Math.sqrt(sx*sy); };
+    const LAGS=[...Array(13).keys()];
+    const rs={}; LAGS.forEach(L=>rs[L]=corr(serie(L)));
+    const best=LAGS.reduce((a,b)=>(rs[b]??-9)>(rs[a]??-9)?b:a);
+
+    const host=document.getElementById('chLluvia');
+    const bar=document.createElement('div');
+    bar.className='legend';
+    bar.innerHTML='<span class="chip" style="color:var(--ink2);cursor:default;border-color:var(--line)">'+
+      'correr la lluvia</span>'+
+      LAGS.map(L=>`<button class="chip lagbtn" data-l="${L}" aria-pressed="${L===best}" `+
+        `style="color:${L===best?'var(--amber)':'var(--water)'}">${L}</button>`).join('')+
+      '<span class="chip" style="color:var(--ink3);cursor:default;border-color:var(--line)">meses</span>';
+    host.appendChild(bar);
+    const box=document.createElement('div'); host.appendChild(box);
+
+    function draw(L){
+      const A=serie(L);
+      const W=900,H=400,P={l:60,r:60,t:46,b:52};
+      const s=svg(W,H);
+      const maxR=Math.max(...A.map(r=>r.mm||0))*1.15;
+      const maxP=Math.max(...A.map(r=>r.kg||0))*1.15;
+      const X=i=>P.l+i*(W-P.l-P.r)/(A.length-1);
+      const Yr=v=>H-P.b-(v/maxR)*(H-P.b-P.t);
+      const Yp=v=>H-P.b-(v/maxP)*(H-P.b-P.t);
+      ticks(maxP/1000,3).forEach(t=>{const y=Yp(t*1000);
+        s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+        s.appendChild(txt(P.l-8,y+4,nf(t)+' t','tk','end'));});
+      ticks(maxR,3).forEach(t=>s.appendChild(txt(W-P.r+8,Yr(t)+4,nf(t)+' mm','tk','start',{fill:'var(--water)'})));
+      // area de lluvia
+      let dr='', first=true;
+      A.forEach((r,i)=>{ if(r.mm===null) return;
+        dr+=(first?'M':'L')+X(i)+' '+Yr(r.mm); first=false; });
+      const lastR=A.map((r,i)=>[r,i]).filter(a=>a[0].mm!==null).pop();
+      const firstR=A.map((r,i)=>[r,i]).filter(a=>a[0].mm!==null)[0];
+      if(lastR){
+        s.appendChild(el('path',{d:dr+`L${X(lastR[1])} ${H-P.b}L${X(firstR[1])} ${H-P.b}Z`,
+          fill:'var(--water)',opacity:.22}));
+        s.appendChild(el('path',{d:dr,fill:'none',stroke:'var(--water)','stroke-width':2}));
+      }
+      // linea de cosecha
+      let dp='', f2=true;
+      A.forEach((r,i)=>{ if(r.kg===null) return; dp+=(f2?'M':'L')+X(i)+' '+Yp(r.kg); f2=false; });
+      s.appendChild(el('path',{d:dp,fill:'none',stroke:'var(--fruit)','stroke-width':2.4,'stroke-linejoin':'round'}));
+      A.forEach((r,i)=>{ if(r.kg===null) return;
+        const c=el('circle',{cx:X(i),cy:Yp(r.kg),r:2.6,fill:'var(--fruit)'});
+        const tt=el('title',{});
+        tt.textContent=`${r.t}: ${nf(r.kg)} kg`+(r.mm!==null?` · lluvia de ${shift(r.t,L)}: ${nf(r.mm)} mm`:'');
+        c.appendChild(tt); s.appendChild(c); });
+      A.forEach((r,i)=>{ if(r.t.slice(5)==='01')
+        s.appendChild(txt(X(i),H-28,r.t.slice(0,4),'tkb')); });
+      s.appendChild(txt(P.l,P.t-24,'Área azul: lluvia  ·  línea naranja: fruta despachada','tkb','start'));
+      const rv=rs[L];
+      s.appendChild(txt(W-P.r,P.t-24,
+        L===0?'sin correr':'lluvia corrida '+L+' meses adelante','tkb','end',{fill:'var(--amber)'}));
+      s.appendChild(txt(W-P.r,P.t-6,
+        rv===null?'':'se parecen en '+nf(rv*100)+'%','tk','end',{fill:rv>.5?'var(--amber)':'var(--ink3)'}));
+      s.appendChild(txt(P.l,H-10,'la lluvia del IDEAM llega hasta dic 2025','tk','start'));
+      box.innerHTML=''; box.appendChild(s);
+    }
+    draw(best);
+    bar.addEventListener('click',e=>{
+      const b=e.target.closest('.lagbtn'); if(!b) return;
+      bar.querySelectorAll('.lagbtn').forEach(x=>{
+        x.setAttribute('aria-pressed', x===b);
+        x.style.color = x===b ? 'var(--amber)' : 'var(--water)'; });
+      draw(+b.dataset.l);
+    });
+
+    const top3=[...LAGS].sort((a,b)=>(rs[b]??-9)-(rs[a]??-9)).slice(0,3);
+    document.getElementById('lluvianote').innerHTML=
+      `<b>Con la lluvia corrida ${best} meses las dos curvas se acoplan al ${nf(rs[best]*100)}%.</b> `+
+      `Sin correr, apenas al ${nf(rs[0]*100)}%. Los tres desfases que mejor ajustan son `+
+      `${top3.map(L=>L+' meses ('+nf(rs[L]*100)+'%)').join(', ')} — todos en la misma ventana, `+
+      `que es lo que uno espera si el efecto es real y no casualidad. `+
+      `Pruebe los botones: al correr de 0 a ${best} se ve cómo el pico de lluvia se monta sobre el pico de cosecha.`;
+  })();
+
+  /* climatologia superpuesta */
+  (function(){
+    const W=520,H=330,P={l:46,r:46,t:34,b:38};
+    const s=svg(W,H), R=K.climaLluvia, Pr=K.climaProd;
+    const mr=Math.max(...R)*1.15, mp=Math.max(...Pr)*1.15;
+    const X=i=>P.l+i*(W-P.l-P.r)/11;
+    const Yr=v=>H-P.b-(v/mr)*(H-P.b-P.t), Yp=v=>H-P.b-(v/mp)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:H-P.b,y2:H-P.b,class:'ax'}));
+    let dr='',dp='';
+    R.forEach((v,i)=>dr+=(i?'L':'M')+X(i)+' '+Yr(v));
+    Pr.forEach((v,i)=>dp+=(i?'L':'M')+X(i)+' '+Yp(v));
+    s.appendChild(el('path',{d:dr+`L${X(11)} ${H-P.b}L${X(0)} ${H-P.b}Z`,fill:'var(--water)',opacity:.22}));
+    s.appendChild(el('path',{d:dr,fill:'none',stroke:'var(--water)','stroke-width':2.4}));
+    s.appendChild(el('path',{d:dp,fill:'none',stroke:'var(--fruit)','stroke-width':2.4}));
+    const iR=R.indexOf(Math.max(...R)), iP=Pr.indexOf(Math.max(...Pr));
+    [[iR,Yr(R[iR]),'var(--water)','pico de lluvia'],[iP,Yp(Pr[iP]),'var(--fruit)','pico de cosecha']]
+      .forEach(a=>{ s.appendChild(el('circle',{cx:X(a[0]),cy:a[1],r:5,fill:a[2]}));
+        s.appendChild(txt(X(a[0]),a[1]-11,a[3],'tk','middle',{fill:a[2]})); });
+    MES.forEach((m,i)=>s.appendChild(txt(X(i),H-14,m[0],'tkb')));
+    s.appendChild(txt(0,14,'Mes típico: lluvia y cosecha','tkb','start'));
+    document.getElementById('chClima').appendChild(s);
+  })();
+
+  /* lag scan */
+  (function(){
+    const W=520,H=330,P={l:46,r:16,t:34,b:46};
+    const s=svg(W,H), L=K.lag;
+    const bw=(W-P.l-P.r)/12, Y=v=>P.t+(H-P.b-P.t)/2-(v*(H-P.b-P.t)/2);
+    [-1,-.5,0,.5,1].forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-7,Y(t)+4,nf(t,1),'tk','end'));});
+    const best=L.reduce((a,b)=>b.r>a.r?b:a);
+    L.forEach((r,i)=>{
+      const x=P.l+i*bw+bw*.2, w=bw*.6, y0=Y(0), y1=Y(r.r);
+      const rect=el('rect',{x,y:Math.min(y0,y1),width:w,height:Math.max(Math.abs(y1-y0),1),
+        fill:r.L===best.L?'var(--amber)':(r.r>0?'var(--frond)':'var(--water)'),opacity:r.L===best.L?1:.6});
+      const tt=el('title',{}); tt.textContent=`Lluvia ${r.L} meses antes: r = ${nf(r.r,2)}`; rect.appendChild(tt);
+      s.appendChild(rect);
+      s.appendChild(txt(x+w/2,H-26,String(r.L),'tk'));
+    });
+    s.appendChild(txt(0,14,'Qué tanto se parecen las dos curvas al correrlas','tkb','start'));
+    s.appendChild(txt((W)/2,H-8,'meses que la lluvia le lleva de ventaja a la cosecha','tk'));
+    document.getElementById('chLag').appendChild(s);
+    document.getElementById('lagnote').innerHTML=
+      `<b>El lote reacciona ${best.L} meses después.</b> La lluvia se concentra entre agosto y octubre; `+
+      `la cosecha se concentra entre marzo y mayo. Corriendo las curvas ${best.L} meses, se acoplan casi perfecto `+
+      `(r = ${nf(best.r,2)}). Eso encaja con la fisiología de la palma: el racimo demora unos cinco meses en llenarse `+
+      `después de la antesis, y el aborto de inflorescencias pega alrededor de los diez. `+
+      `<b>En la práctica significa que la plata que metas en agua entre agosto y octubre la cobras en la cosecha de marzo a mayo siguiente</b>, `+
+      `y que un enero seco no se arregla en enero. Eso sí: la serie del IDEAM para esta estación es estimada a partir del patrón regional, `+
+      `y varios años son casi la misma curva multiplicada por un factor. Sirve para leer la forma de la temporada, no para medir cuánto llovió en el lote.`;
+  })();
+
+  /* pluviometro de la finca vs IDEAM */
+  (function(){
+    const V=D.pluvio, W=900,H=360,P={l:60,r:16,t:40,b:56};
+    const s=svg(W,H);
+    const max=Math.max(...V.map(r=>Math.max(r.mm,r.ideam||0)))*1.12;
+    const T=ticks(max,4), top=T[T.length-1], bw=(W-P.l-P.r)/V.length;
+    T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-8,y+4,nf(t)+' mm','tk','end'));});
+    V.forEach((r,i)=>{
+      const x=P.l+i*bw;
+      const hf=(r.mm/top)*(H-P.b-P.t);
+      const a=el('rect',{x:x+bw*.14,y:H-P.b-hf,width:bw*.34,height:hf,fill:'var(--water)'});
+      const t1=el('title',{}); t1.textContent=`${r.t}: ${nf(r.mm)} mm medidos en ${r.dias} días de lluvia`;
+      a.appendChild(t1); s.appendChild(a);
+      s.appendChild(txt(x+bw*.31,H-P.b-hf-8,nf(r.mm),'vlab'));
+      if(r.ideam!==null && r.ideam!==undefined){
+        const hi=(r.ideam/top)*(H-P.b-P.t);
+        const b=el('rect',{x:x+bw*.52,y:H-P.b-hi,width:bw*.34,height:hi,fill:'var(--ink3)',opacity:.6});
+        const t2=el('title',{}); t2.textContent=`${r.t}: ${nf(r.ideam)} mm estimados por el IDEAM`;
+        b.appendChild(t2); s.appendChild(b);
+      }
+      const [yy,mm]=r.t.split('-');
+      s.appendChild(txt(x+bw/2,H-34,MES[+mm-1],'tkb'));
+      s.appendChild(txt(x+bw/2,H-18,r.parcial?yy+' '+r.parcial:yy,'tk'));
+    });
+    s.appendChild(txt(P.l,P.t-16,'Azul: el pluviómetro de la finca   ·   gris: la estimación del IDEAM','tkb','start'));
+    s.appendChild(txt(W-P.r-2,P.t-16,'julio está incompleto (el cuaderno arranca el 25)','tk','end'));
+    document.getElementById('chPluvio').appendChild(s);
+    const f=V.filter(r=>r.ideam&&r.t>='2025-08'), sf=f.reduce((a,b)=>a+b.mm,0), si=f.reduce((a,b)=>a+b.ideam,0);
+    document.getElementById('pluvnote').innerHTML=
+      `<b>De agosto a diciembre de 2025 cayeron ${nf(sf)} mm en la finca. El IDEAM estimaba ${nf(si)}.</b> `+
+      `Casi el doble. Y no es un error puntual: agosto, septiembre, octubre y noviembre están todos entre 1,7 y 2,5 veces por encima. `+
+      `Solo diciembre coincide. <b>Eso invalida buena parte del análisis de déficit que viene abajo</b> — está armado sobre una serie `+
+      `que, en los únicos meses donde se puede verificar, mide la mitad del agua real.`;
+  })();
+
+  /* lluvia diaria del cuaderno */
+  (function(){
+    const V=D.pluvio, W=900,H=300,P={l:54,r:16,t:36,b:52};
+    const s=svg(W,H);
+    const max=Math.max(...V.map(r=>r.mm/r.dias))*1.3;
+    const T=ticks(max,3), top=T[T.length-1], bw=(W-P.l-P.r)/V.length;
+    T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-8,y+4,nf(t)+' mm','tk','end'));});
+    V.forEach((r,i)=>{
+      const x=P.l+i*bw+bw*.25, w=bw*.5, h=((r.mm/r.dias)/top)*(H-P.b-P.t);
+      const rect=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:'var(--frond)',opacity:.85});
+      const tt=el('title',{}); tt.textContent=`${r.t}: ${r.dias} días de lluvia, ${nf(r.mm/r.dias)} mm por día lluvioso`;
+      rect.appendChild(tt); s.appendChild(rect);
+      s.appendChild(txt(x+w/2,H-P.b-h-8,nf(r.mm/r.dias),'vlab'));
+      const [yy,mm]=r.t.split('-');
+      s.appendChild(txt(x+w/2,H-32,MES[+mm-1],'tkb'));
+      s.appendChild(txt(x+w/2,H-16,r.dias+' días','tk'));
+    });
+    s.appendChild(txt(P.l,P.t-14,'Cuántos días llovió y qué tan fuerte cada vez','tkb','start'));
+    document.getElementById('chDias').appendChild(s);
+    const a25=V.find(r=>r.t==='2025-08').mm, a26=V.find(r=>r.t==='2026-08').mm;
+    document.getElementById('diasnote').innerHTML=
+      `<b>Agosto de 2026 trajo ${nf(a26)} mm en 4 días. Agosto de 2025 había traído ${nf(a25)} en 13.</b> `+
+      `Un tercio del agua y un tercio de los días. Y septiembre va en 40 mm al día 11, cuando a esa misma altura de 2025 `+
+      `ya llevaba 212. <b>La temporada de lluvias de 2026 viene corta</b>, y no es la primera señal del año: en marzo no llovió un solo día y abril apenas trajo 22 mm. `+
+      `Por el desfase de siete meses, lo que caiga de agosto a octubre es la cosecha de marzo a mayo de 2027. `+
+      `Todavía faltan septiembre y octubre y una temporada se endereza rápido, pero el dato hay que mirarlo ahora, no en marzo.`;
+  })();
+
+  /* deficit anual, con filtro de años */
+  (function(){
+    const A2=K.anual, ys=A2.map(r=>r.anio);
+    const MIN=Math.min(...ys), MAX=Math.max(...ys);
+    const host=document.getElementById('chDef');
+    const bar=document.createElement('div');
+    bar.className='legend';
+    bar.innerHTML=
+      `<button class="chip rng" data-a="2022" data-b="${MAX}" aria-pressed="true" style="color:var(--fruit)">desde que administra el lote</button>`+
+      `<button class="chip rng" data-a="${MAX-5}" data-b="${MAX}" aria-pressed="false" style="color:var(--amber)">últimos 6 años</button>`+
+      `<button class="chip rng" data-a="${MIN}" data-b="${MAX}" aria-pressed="false" style="color:var(--water)">toda la serie</button>`+
+      `<span class="chip" style="color:var(--ink3);cursor:default;border-color:var(--line)">o elija: `+
+      `<select id="dfA">${ys.map(y=>`<option${y===2022?' selected':''}>${y}</option>`).join('')}</select>`+
+      ` a <select id="dfB">${ys.map(y=>`<option${y===MAX?' selected':''}>${y}</option>`).join('')}</select></span>`;
+    host.appendChild(bar);
+    const box=document.createElement('div'); host.appendChild(box);
+
+    function draw(a,b){
+      if(a>b){const t=a;a=b;b=t;}
+      const V=A2.filter(r=>r.anio>=a&&r.anio<=b);
+      const W=900,H=330,P={l:60,r:16,t:30,b:48};
+      const s=svg(W,H);
+      const max=Math.max(...V.map(r=>r.def))*1.18, T=ticks(max,4), top=T[T.length-1];
+      const bw=(W-P.l-P.r)/V.length;
+      T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+        s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+        s.appendChild(txt(P.l-8,y+4,nf(t)+' mm','tk','end'));});
+      const y400=H-P.b-(400/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y400,y2:y400,stroke:'var(--amber)','stroke-width':1.5,'stroke-dasharray':'7 5'}));
+      s.appendChild(txt(P.l+4,y400-8,'400 mm · umbral de caída fuerte','tk','start',{fill:'var(--amber)'}));
+      const prom=V.reduce((x,r)=>x+r.def,0)/V.length;
+      const yp=H-P.b-(prom/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:yp,y2:yp,stroke:'var(--ink2)','stroke-width':1,'stroke-dasharray':'2 4'}));
+      s.appendChild(txt(W-P.r-2,yp-7,'promedio del período: '+nf(prom)+' mm','tk','end',{fill:'var(--ink2)'}));
+      V.forEach((r,i)=>{
+        const h=(r.def/top)*(H-P.b-P.t), x=P.l+i*bw+bw*.2, w=bw*.6;
+        const col=r.def>600?'var(--fruit)':(r.def>500?'var(--amber)':'var(--water)');
+        const rect=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:col,opacity:.9});
+        const tt=el('title',{}); tt.textContent=`${r.anio}: faltaron ${nf(r.def)} mm · llovieron ${nf(r.mm)} mm`;
+        rect.appendChild(tt); s.appendChild(rect);
+        s.appendChild(txt(x+w/2,H-P.b-h-8,nf(r.def),'vlab'));
+        s.appendChild(txt(x+w/2,H-28,String(r.anio),'tkb'));
+        s.appendChild(txt(x+w/2,H-12,nf(r.mm)+' mm','tk'));
+      });
+      box.innerHTML=''; box.appendChild(s);
+
+      const peor=V.reduce((x,r)=>r.def>x.def?r:x), mejor=V.reduce((x,r)=>r.def<x.def?r:x);
+      const sobre=V.filter(r=>r.def>400).length;
+      document.getElementById('defnote').innerHTML=
+        `Entre ${a} y ${b}, el peor año fue <b>${peor.anio}</b> (faltaron ${nf(peor.def)} mm) y el mejor <b>${mejor.anio}</b> (${nf(mejor.def)} mm). `+
+        `<b>${sobre} de ${V.length} años pasan el umbral de 400 mm.</b> `+
+        `<b>Tómelo como un ordenamiento, no como una medición.</b> Si el IDEAM se quedó corto a la mitad en 2025, `+
+        `probablemente también se quedó corto en los otros años, y el déficit verdadero está por debajo de estas barras. `+
+        `Enero y febrero de 2026 son el mejor ejemplo: la serie da 9 y 8 mm, el pluviómetro registró 93 y 212.`;
+    }
+    const selA=bar.querySelector('#dfA'), selB=bar.querySelector('#dfB');
+    function sync(a,b){ selA.value=a; selB.value=b; draw(a,b); }
+    bar.addEventListener('click',e=>{
+      const b=e.target.closest('.rng'); if(!b) return;
+      bar.querySelectorAll('.rng').forEach(x=>x.setAttribute('aria-pressed', x===b));
+      sync(+b.dataset.a,+b.dataset.b);
+    });
+    bar.addEventListener('change',e=>{
+      if(!e.target.matches('#dfA,#dfB')) return;
+      bar.querySelectorAll('.rng').forEach(x=>x.setAttribute('aria-pressed','false'));
+      draw(+selA.value,+selB.value);
+    });
+    sync(2022,MAX);
+  })();
+
+  /* cruce lluvia vs abono */
+  (function(){
+    const C=K.cruce, W=900,H=380,P={l:62,r:62,t:30,b:86};
+    const s=svg(W,H);
+    const maxF=Math.max(...C.map(r=>r.fertPrev))*1.35, maxT=Math.max(...C.map(r=>r.tonHa))*1.35;
+    const maxM=Math.max(...C.map(r=>r.mmPrev))*1.35;
+    const bw=(W-P.l-P.r)/C.length;
+    ticks(maxT,4).forEach(t=>{const y=H-P.b-(t/maxT)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-8,y+4,nf(t)+' t/ha','tk','end'));});
+    C.forEach((r,i)=>{
+      const x=P.l+i*bw+bw*.3, w=bw*.4, h=(r.tonHa/maxT)*(H-P.b-P.t);
+      const rect=el('rect',{x,y:H-P.b-h,width:w,height:h,fill:'var(--frond)',opacity:r.parcial?.6:1});
+      const tt=el('title',{}); tt.textContent=`Cosecha ${r.cosecha}: ${nf(r.tonHa,1)} t/ha`; rect.appendChild(tt);
+      s.appendChild(rect);
+      s.appendChild(txt(x+w/2,H-P.b-h-9,nf(r.tonHa,1)+' t/ha','vlab'));
+      s.appendChild(txt(x+w/2,H-P.b+20,'cosecha '+r.cosecha+(r.parcial?'*':''),'tkb'));
+      s.appendChild(txt(x+w/2,H-P.b+40,nf(r.mmPrev)+' mm el año antes','tk','middle',{fill:'var(--water)'}));
+      s.appendChild(txt(x+w/2,H-P.b+58,'abono $'+nf(r.fertPrev/1e6)+' M','tk','middle',{fill:'var(--amber)'}));
+    });
+    // resaltar el par 2024 vs 2025
+    const x0=P.l+1*bw+bw*.1, x1=P.l+3*bw-bw*.1;
+    s.appendChild(el('rect',{x:x0,y:P.t-14,width:x1-x0,height:H-P.b-P.t+78,fill:'none',
+      stroke:'var(--fruit)','stroke-width':1.5,'stroke-dasharray':'5 4'}));
+    s.appendChild(txt((x0+x1)/2,P.t-20,'misma agua, abono parecido, 2,5 veces de diferencia','tkb','middle',{fill:'var(--fruit)'}));
+    document.getElementById('chCruce').appendChild(s);
+    const c24=C.find(r=>r.cosecha===2024), c25=C.find(r=>r.cosecha===2025);
+    document.getElementById('crucenote').innerHTML=
+      `Mire las dos del medio. La cosecha de 2024 se formó con <b>${nf(c24.mmPrev)} mm</b> y <b>${mill(c24.fertPrev)}</b> de abono: dio <b>${nf(c24.tonHa,1)} t/ha</b>. `+
+      `La de 2025 se formó con <b>${nf(c25.mmPrev)} mm</b> y <b>${mill(c25.fertPrev)}</b> —seis millones menos—: dio <b>${nf(c25.tonHa,1)} t/ha</b>. `+
+      `<b>El abono no compró nada ese año.</b> Y ahora se sabe por qué: en 2024 murieron unas 80 palmas por estrés hídrico, `+
+      `el único año del que se tenga memoria en que eso pasó. <b>Ese dato vale más que toda la estadística de esta página.</b> `+
+      `Una palma adulta no se muere de sed en un año corriente; para matarla hace falta un déficit largo y severo. `+
+      `Lo que dice ese hecho es que en 2024 el limitante fue el agua, sin ambigüedad, y que los ${mill(c24.fertPrev)} de abono de 2023 `+
+      `no podían hacer nada: sin agua la raíz no toma el nutriente. `+
+      `También le devuelve crédito a la serie del IDEAM — los milímetros están cortos a la mitad, pero señaló bien cuáles fueron los dos años secos de la década.`;
+  })();
+
+  /* veredicto */
+  (function(){
+    const margen=505264; // $ por tonelada, del bloque de productividad
+    const tPorMill=1e6/margen;
+    const plan=83e6, tPlan=plan/margen;
+    const S=D.sequia;
+    document.getElementById('veredicto').innerHTML=`
+      <li><b>El agua es el limitante, y ahora hay una prueba física.</b> Ochenta palmas muertas de sed en 2024, cosa que no había pasado nunca. No es una correlación sobre cuatro puntos: es un cultivo diciendo que le faltó agua hasta el punto de perder individuos.</li>
+      <li><b>Y el abono no puede taparlo.</b> 2023 fue el segundo año de mayor inversión en fertilizante —${mill(36e6)}— y la cosecha siguiente fue la peor de la historia del lote. Sin agua la raíz no toma el nutriente; esa plata se perdió en el suelo.</li>
+      <li><b>Ese año costó unos ${mill(S.perdidaP)}.</b> ${nf(S.perdidaT)} toneladas menos que un año corriente, a ${money(S.margen)} de margen cada una. Más las 80 palmas, que son ${nf(S.palmasP/1e6,1)} M al año que dejan de entrar hasta que los reemplazos produzcan, y eso toma cuatro años.</li>
+      <li><b>Así es como hay que evaluar el riego: como seguro, no como fertilizante líquido.</b> Si un año así vuelve una vez cada ocho, el riego vale <b>${mill(S.perdidaP/8)} al año</b> solo por evitarlo. Una vez cada cinco, <b>${mill(S.perdidaP/5)}</b>. Eso es antes de contar lo que sume en los años normales llenando los meses flacos.</li>
+      <li><b>Con la regla de ${nf(1e6/S.margen,1)} toneladas por millón, un sistema de ${mill(300e6)} se paga en ocho o nueve años solo con el seguro.</b> Métele lo que aporte en años corrientes y baja bastante. Falta tu cifra real de instalación y operación para cerrarlo.</li>
+      <li><b>El abono no se suelta, se sostiene.</b> Los niveles de 2024 y 2025 (${mill(30e6)} a ${mill(50e6)}) acompañaron las dos mejores cosechas. No hay razón para subirlo ni para recortarlo: el problema no estaba ahí.</li>
+      <li><b>El riego puede necesitarse antes de lo previsto.</b> Yo contaba con que de septiembre a noviembre sobraría agua, como en 2025. Pero agosto trajo un tercio de lo del año pasado y septiembre va en 40 mm. Si octubre sigue corto, el sistema entra a trabajar este mismo año y no en diciembre — y lo que se riegue ahora pesa sobre la cosecha de marzo a mayo de 2027, que es la grande.</li>
+      <li><b>Hay tres meses para montar la medición, y se van rápido.</b> El riego solo se prende en seco, y justo entonces no hay con qué comparar. Antes de diciembre: marcar un bloque de tres o cuatro hectáreas que se deja sin regar, y arreglar cómo pesar su fruta aparte. Es la única forma de tener una respuesta propia, y cuesta unas pocas toneladas de ese bloque.</li>
+      <li><b>El cuaderno está al día y eso vale.</b> Con julio, agosto y septiembre anotados es que se ve que la temporada viene corta. Sin ese registro nadie se habría dado cuenta hasta que llegara la cosecha.</li>
+      <li><b>El lote ya pasó tres meses secos seguidos este año, sin riego y sin opción.</b> En marzo no llovió un solo día; abril trajo 22 mm y mayo 78, contra los 140 que consume la palma. El sistema estaba inhabilitado. No fue que no hiciera falta: no se podía. Ese estrés ya está en camino hacia la cosecha de 2027, sobre todo el segundo semestre.</li>
+      <li><b>Y por eso 2027 no sirve como línea base del riego.</b> Su cosecha se formó en un 2026 que tuvo verano sin riego. Lo que se riegue de diciembre en adelante entra tarde para esa cosecha. El primer año limpio para juzgar el sistema es 2028.</li>
+      <li><b>Sigue sin saberse cuánta agua retiene ese suelo</b>, que es lo que define de qué tamaño debe ser el sistema completo. Un aforo de humedad en pleno verano, o simplemente anotar cuántos días aguanta el lote sin mostrar síntomas, resolvería la duda antes de comprar el siguiente módulo.</li>`;
+  })();
+})();
+
+/* ---------- 4. precio ---------- */
+(function(){
+  const W=900,H=330,P={l:60,r:20,t:20,b:38};
+  const s=svg(W,H), p=D.precioMensual;
+  const max=Math.max(...p.map(r=>r.p)), T=ticks(max,4), top=T[T.length-1];
+  const X=i=>P.l+i*(W-P.l-P.r)/(p.length-1), Y=v=>H-P.b-(v/top)*(H-P.b-P.t);
+  T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,Y(t)+4,'$'+nf(t),'tk','end'));});
+  let d='',a='';
+  p.forEach((r,i)=>{ d+=(i?'L':'M')+X(i)+' '+Y(r.p); });
+  a = d+`L${X(p.length-1)} ${H-P.b}L${P.l} ${H-P.b}Z`;
+  s.appendChild(el('path',{d:a,fill:'var(--amber)',opacity:.12}));
+  s.appendChild(el('path',{d,fill:'none',stroke:'var(--amber)','stroke-width':2.4,'stroke-linejoin':'round'}));
+  p.forEach((r,i)=>{
+    const c=el('circle',{cx:X(i),cy:Y(r.p),r:3,fill:'var(--amber)'});
+    const tt=el('title',{}); tt.textContent=`${r.t}: $${nf(r.p)} por kg`; c.appendChild(tt);
+    s.appendChild(c);
+    if(r.t.slice(5)==='01'||i===0) s.appendChild(txt(X(i),H-14,r.t.slice(0,4),'tkb'));
+  });
+  document.getElementById('chPrecio').appendChild(s);
+  const hi=p.reduce((x,y)=>y.p>x.p?y:x), lo=p.reduce((x,y)=>y.p<x.p?y:x), ult=p[p.length-1];
+  document.getElementById('prenote').innerHTML =
+    `El techo fue <b>$${nf(hi.p)}/kg</b> en ${hi.t} y el piso <b>$${nf(lo.p)}/kg</b> en ${lo.t}: una caída del `+
+    `${nf((1-lo.p/hi.p)*100,0)}%. El último mes facturado cerró en <b>$${nf(ult.p)}/kg</b>. `+
+    `Por eso 2024 duele doble: menos fruta y al precio más bajo de los cinco años.`;
+})();
+
+/* ---------- 5. gastos por categoría ---------- */
+(function(){
+  const g=D.egresoCat, W=520, rowH=27, P={l:130,r:56,t:18,b:10};
+  const H=P.t+P.b+g.length*rowH, s=svg(W,H);
+  const max=Math.max(...g.map(r=>r.v));
+  const pal={'MANO DE OBRA':'var(--frond)','COSECHA':'var(--frond)','LABORES CULTIVO':'var(--frond)',
+    'FERTILIZACION':'var(--frond)','TRANSPORTE':'var(--water)','MAQUINARIA':'var(--water)',
+    'COMBUSTIBLE':'var(--water)','IMPUESTOS':'var(--fruit)','RETIROS Y DEUDAS':'var(--fruit)'};
+  const cap = t=>t.charAt(0)+t.slice(1).toLowerCase();
+  const fertReal = D.fert.reduce((a,b)=>a+b.real,0);
+  g.forEach((r,i)=>{
+    const y=P.t+i*rowH, w=(r.v/max)*(W-P.l-P.r);
+    if(r.cat==='FERTILIZACION'){
+      const wr=(fertReal/max)*(W-P.l-P.r);
+      const gh=el('rect',{x:P.l,y:y+4,width:wr,height:rowH-13,fill:'none',
+        stroke:'var(--frond)','stroke-width':1.5,'stroke-dasharray':'4 3'});
+      const t0=el('title',{}); t0.textContent=`Fertilización real: ${money(fertReal)}`; gh.appendChild(t0);
+      s.appendChild(gh);
+      s.appendChild(txt(P.l+wr+8,y+rowH/2+2,nf(fertReal/1e6,0)+' M real','vlab','start',{fill:'var(--frond)'}));
+    }
+    const rect=el('rect',{x:P.l,y:y+4,width:Math.max(w,1),height:rowH-13,
+      fill:pal[r.cat]||'var(--amber)',opacity:.9});
+    const tt=el('title',{}); tt.textContent=`${cap(r.cat)}: ${money(r.v)}`; rect.appendChild(tt);
+    s.appendChild(rect);
+    s.appendChild(txt(P.l-10,y+rowH/2+2,cap(r.cat),'tkb','end'));
+    if(r.cat!=='FERTILIZACION')
+      s.appendChild(txt(P.l+w+8,y+rowH/2+2,nf(r.v/1e6,0)+' M','vlab','start'));
+  });
+  document.getElementById('chGasto').appendChild(s);
+  const total=g.reduce((a,b)=>a+b.v,0);
+  const cultivo=g.filter(r=>['MANO DE OBRA','COSECHA','LABORES CULTIVO','FERTILIZACION','TRANSPORTE','MAQUINARIA','COMBUSTIBLE'].includes(r.cat))
+    .reduce((a,b)=>a+b.v,0);
+  const fert=g.find(r=>r.cat==='FERTILIZACION').v;
+  const fertReal2 = D.fert.reduce((a,b)=>a+b.real,0);
+  const totAj = total + D.fertGap;
+  const cultAj = cultivo + D.fertGap;
+  document.getElementById('gastonote').innerHTML =
+    `La barra llena es lo anotado en la hoja; la punteada, lo que de verdad se gastó en abono. `+
+    `La hoja registra <b>${mill(fert)}</b> de fertilización, pero el gasto real fue <b>${mill(fertReal2)}</b>: `+
+    `faltan <b>${mill(D.fertGap)}</b> por entrar a las cuentas. `+
+    `Con ese ajuste los egresos suben a <b>${mill(totAj)}</b> y el costo directo del cultivo a `+
+    `<b>${money(cultAj/(tot.kg/1000))}</b> por tonelada — y todavía falta lo que se gastó en 2024 fuera del abono.`;
+})();
+
+/* ---------- 5b. ingresos vs egresos por año ---------- */
+(function(){
+  const W=520,H=330,P={l:52,r:14,t:18,b:42};
+  const s=svg(W,H);
+  const max=Math.max(...A.map(r=>Math.max(r.ingreso+r.otros,r.egreso)));
+  const T=ticks(max,4), top=T[T.length-1], bw=(W-P.l-P.r)/A.length;
+  T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-7,y+4,nf(t/1e6)+'M','tk','end'));});
+  A.forEach((r,i)=>{
+    const x=P.l+i*bw, inn=r.ingreso+r.otros;
+    const hi=(inn/top)*(H-P.b-P.t), he=(r.egreso/top)*(H-P.b-P.t);
+    const a=el('rect',{x:x+bw*.14,y:H-P.b-hi,width:bw*.34,height:hi,fill:'var(--frond)'});
+    const b=el('rect',{x:x+bw*.5,y:H-P.b-he,width:bw*.34,height:he,fill:'var(--fruit)',opacity:.85});
+    const t1=el('title',{}); t1.textContent=`${r.anio} · entró ${money(inn)}`; a.appendChild(t1);
+    const t2=el('title',{}); t2.textContent=`${r.anio} · salió ${money(r.egreso)}`; b.appendChild(t2);
+    s.appendChild(a); s.appendChild(b);
+    s.appendChild(txt(x+bw/2,H-24,String(r.anio),'tkb'));
+    const u=inn-r.egreso;
+    s.appendChild(txt(x+bw/2,H-8,(u>=0?'+':'−')+nf(Math.abs(u)/1e6)+'M','tk',
+      'middle',{fill:r.egreso===0?'var(--ink3)':(u>=0?'var(--frond)':'var(--fruit)')}));
+  });
+  s.appendChild(txt(P.l,P.t-2,'Ingresos y egresos por año','tkb','start'));
+  document.getElementById('chIE').appendChild(s);
+})();
+
+/* ---------- 6. tabla ---------- */
+(function(){
+  const cols=['Año','Toneladas','t/ha','kg por palma','Racimos','Racimo (kg)','$/kg','Ingresos','Egresos','Despachos'];
+  let h='<thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+  A.forEach(r=>{
+    h+=`<tr>
+      <td><b>${r.anio}</b>${r.parcial?' <span class="flag">al 28 ago</span>':''}</td>
+      <td class="n">${nf(r.kg/1000,1)}</td>
+      <td class="n">${nf(r.tonHa,1)}</td>
+      <td class="n">${nf(r.kgPalma,0)}</td>
+      <td class="n">${nf(r.racimos)}</td>
+      <td class="n">${nf(r.pesoRacimo,1)}</td>
+      <td class="n">${nf(r.precio)}</td>
+      <td class="n">${nf((r.ingreso+r.otros)/1e6)} M</td>
+      <td class="n">${r.egreso?nf(r.egreso/1e6)+' M':'<span class="flag">sin datos</span>'}</td>
+      <td class="n">${r.viajes}</td></tr>`;
+  });
+  h+=`<tr style="border-top:2px solid var(--ink3)">
+      <td><b>Total</b></td><td class="n">${nf(tot.kg/1000,1)}</td>
+      <td class="n">${nf(tot.kg/1000/70/5,1)}</td><td class="n">${nf(tot.kg/8610,0)}</td>
+      <td class="n">${nf(tot.rac)}</td><td class="n">${nf(tot.kg/tot.rac,1)}</td>
+      <td class="n">${nf(tot.ing/tot.kg)}</td><td class="n">${nf(tot.ing/1e6)} M</td>
+      <td class="n">${nf(tot.eg/1e6)} M</td><td class="n">${tot.viajes}</td></tr></tbody>`;
+  document.getElementById('tabla').innerHTML=h;
+})();
+/* ---------- pestañas ---------- */
+(function(){
+  const nav=document.getElementById('tabs');
+  const secs=[...document.querySelectorAll('section[data-tab]')];
+  function show(t,push){
+    secs.forEach(s=>s.classList.toggle('vis', s.dataset.tab===t));
+    nav.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.t===t));
+    if(push && location.hash.slice(1)!==t) history.replaceState(null,'','#'+t);
+  }
+  nav.addEventListener('click',e=>{
+    const b=e.target.closest('.tab'); if(!b) return;
+    show(b.dataset.t,true);
+    if(nav.scrollIntoView) nav.scrollIntoView({block:'start',behavior:'smooth'});
+  });
+  nav.addEventListener('keydown',e=>{
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft') return;
+    const bs=[...nav.querySelectorAll('.tab')];
+    const i=bs.findIndex(b=>b.getAttribute('aria-selected')==='true');
+    const j=(i+(e.key==='ArrowRight'?1:bs.length-1))%bs.length;
+    bs[j].focus(); show(bs[j].dataset.t,true); e.preventDefault();
+  });
+  const ini=location.hash.slice(1);
+  show(secs.some(s=>s.dataset.tab===ini)?ini:'prod',false);
+})();
+</script>
+</body>
+</html>
