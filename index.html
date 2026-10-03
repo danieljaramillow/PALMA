@@ -394,6 +394,12 @@ footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:v
   <p class="lead">Precio promedio ponderado de cada mes, tomado de las facturas.</p>
   <div class="panel"><div id="chPrecio"></div></div>
   <p class="note" id="prenote"></p>
+
+  <div class="panel" style="margin-top:18px">
+    <h3 class="sub">Hacia dónde va el precio</h3>
+    <div id="chTend"></div>
+  </div>
+  <p class="note" id="tendnote"></p>
 </section>
 
 <section data-tab="plata">
@@ -1221,6 +1227,55 @@ chMes();
     `${nf((1-lo.p/hi.p)*100,0)}%. El último mes facturado cerró en <b>$${nf(ult.p)}/kg</b>. `+
     `Por eso 2024 duele doble: menos fruta y al precio más bajo de los cinco años.`;
 })();
+  /* tendencia reciente del precio */
+  (function(){
+    const P6=D.precioMensual.slice(-7);
+    const W=900,H=280,Pd={l:60,r:16,t:30,b:52};
+    const s=svg(W,H);
+    const lo=Math.min(...P6.map(r=>r.p)), hi=Math.max(...P6.map(r=>r.p));
+    const pad=(hi-lo)*0.45||50, top=hi+pad, bot=Math.max(0,lo-pad);
+    const X=i=>Pd.l+i*(W-Pd.l-Pd.r)/(P6.length-1);
+    const Y=v=>H-Pd.b-((v-bot)/(top-bot))*(H-Pd.b-Pd.t);
+    ticks(top,4).filter(t=>t>=bot).forEach(t=>{
+      s.appendChild(el('line',{x1:Pd.l,x2:W-Pd.r,y1:Y(t),y2:Y(t),class:'gl'}));
+      s.appendChild(txt(Pd.l-8,Y(t)+4,'$'+nf(t),'tk','end'));});
+    let d='';
+    P6.forEach((r,i)=>{ d+=(i?'L':'M')+X(i)+' '+Y(r.p); });
+    s.appendChild(el('path',{d,fill:'none',stroke:'var(--amber)','stroke-width':3,'stroke-linejoin':'round'}));
+    const iMax=P6.reduce((a,r,i)=>r.p>P6[a].p?i:a,0);
+    P6.forEach((r,i)=>{
+      const baja = i>iMax;
+      const c=el('circle',{cx:X(i),cy:Y(r.p),r:i===P6.length-1?6:4.5,
+        fill:baja?'var(--fruit)':'var(--amber)'});
+      const tt=el('title',{}); tt.textContent=`${r.t}: $${nf(r.p)} por kg · ${nf(r.kg)} kg`;
+      c.appendChild(tt); s.appendChild(c);
+      s.appendChild(txt(X(i),Y(r.p)-14,'$'+nf(r.p),'vlab'));
+      const [yy,mm]=r.t.split('-');
+      s.appendChild(txt(X(i),H-30,MES[+mm-1],'tkb'));
+      s.appendChild(txt(X(i),H-14,yy,'tk'));
+    });
+    s.appendChild(txt(Pd.l,Pd.t-14,'Precio pagado por kilo, últimos siete meses facturados','tkb','start'));
+    document.getElementById('chTend').appendChild(s);
+
+    const pico=P6[iMax], ult=P6[P6.length-1];
+    const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const mpico=MESL[+pico.t.slice(5)-1], mult=MESL[+ult.t.slice(5)-1];
+    const caida=1-ult.p/pico.p, seguidos=P6.length-1-iMax;
+    const MARGEN=D.sequia.margen, tonAnio=A.find(r=>r.anio===2025).kg/1000;
+    const golpe=(pico.p-ult.p)*1000*tonAnio;
+    const margenHoy=MARGEN-(pico.p-ult.p)*1000;
+    document.getElementById('tendnote').innerHTML=
+      `<b>${seguidos} meses seguidos a la baja</b>, de $${nf(pico.p)} en ${mpico} a <b>$${nf(ult.p)}</b> en ${mult}: `+
+      `un ${nf(caida*100)}% menos. No es para alarmarse —sigue muy por encima del piso de $564 de enero de 2024— `+
+      `pero sí para tenerlo presente: <b>si el precio se queda en este nivel, un año de ${nf(tonAnio)} toneladas `+
+      `vale ${mill(golpe)} menos</b> que al precio de ${mpico}.`;
+    document.getElementById('tendnote').innerHTML +=
+      ` Y toca directamente la cuenta del riego. El margen de ${money(MARGEN)} por tonelada con el que están hechos esos `+
+      `números es el promedio de cinco años; a este precio quedaría cerca de ${money(margenHoy)}. `+
+      `<b>Margen más flaco significa que cada inversión necesita más toneladas para pagarse, no menos.</b> `+
+      `La cosecha grande de marzo a mayo de 2027 es justo la que se vendería a este precio.`;
+  })();
+
 
 /* ---------- 5. gastos por categoría ---------- */
 (function(){
