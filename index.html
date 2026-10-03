@@ -322,6 +322,15 @@ footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:v
   <p class="note" id="rendnote"></p>
 </section>
 
+<section data-tab="prod">
+  <h2>El racimo es el indicador más limpio que tiene</h2>
+  <p class="lead">La cosecha son dos cosas multiplicadas: cuántos racimos da cada hectárea y cuánto pesa cada uno.
+  Separadas cuentan historias distintas — las barras son el número, la línea es el peso.</p>
+  <div class="panel"><div id="chRacimo"></div></div>
+  <p class="note" id="racimonote"></p>
+  <p class="note" id="racimonote2"></p>
+</section>
+
 <section data-tab="abono">
   <h2>Lo que se abona hoy se cosecha el año que viene</h2>
   <p class="lead">Barras: plata puesta en fertilización cada año. Puntos: toneladas por hectárea de la cosecha <em>siguiente</em>. La línea punteada es lo que costaría una ronda completa según el plan de la hoja ABONAMIENTO.</p>
@@ -610,6 +619,64 @@ chMes();
     `cayó el rendimiento y el racimo se mantuvo en ${nf(y24.pesoRacimo,1).replace('.',',')} kg, lo que apunta a menos racimos por palma antes que a racimos más pequeños. `+
     `Un cultivo de esta edad bien manejado en Colombia anda entre 18 y 24 t/ha, así que todavía hay techo.`;
 })();
+  /* racimos por hectarea vs peso del racimo */
+  (function(){
+    const W=900,H=420,P={l:66,r:70,t:34,b:70};
+    const s=svg(W,H);
+    const V=A.map(r=>({...r, racHa:r.racimos/70}));
+    const maxR=Math.max(...V.map(r=>r.racHa))*1.2;
+    const T=ticks(maxR,4), top=T[T.length-1], bw=(W-P.l-P.r)/V.length;
+    T.forEach(t=>{const y=H-P.b-(t/top)*(H-P.b-P.t);
+      s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:y,y2:y,class:t===0?'ax':'gl'}));
+      s.appendChild(txt(P.l-8,y+4,nf(t),'tk','end'));});
+    s.appendChild(txt(P.l-8,P.t-14,'racimos/ha','tk','end',{fill:'var(--water)'}));
+    const pmax=Math.max(...V.map(r=>r.pesoRacimo))*1.45;
+    const Yp=v=>H-P.b-(v/pmax)*(H-P.b-P.t);
+    V.forEach((r,i)=>{
+      const h2=(r.racHa/top)*(H-P.b-P.t), x=P.l+i*bw+bw*.22, w=bw*.56;
+      const col = r.racHa<800 ? 'var(--fruit)' : 'var(--water)';
+      const rect=el('rect',{x,y:H-P.b-h2,width:w,height:h2,fill:col,opacity:r.parcial?.55:.9});
+      const tt=el('title',{});
+      tt.textContent=`${r.anio}: ${nf(r.racHa)} racimos/ha × ${nf(r.pesoRacimo,1)} kg = ${nf(r.tonHa,1)} t/ha`;
+      rect.appendChild(tt); s.appendChild(rect);
+      if(r.parcial) s.appendChild(el('rect',{x,y:H-P.b-h2,width:w,height:h2,fill:'none',
+        stroke:col,'stroke-width':1.5,'stroke-dasharray':'4 3'}));
+      s.appendChild(txt(x+w/2,H-P.b-h2-9,nf(r.racHa),'vlab'));
+      s.appendChild(txt(x+w/2,H-P.b+22,String(r.anio)+(r.parcial?'*':''),'tkb'));
+      s.appendChild(txt(x+w/2,H-P.b+40,nf(r.tonHa,1)+' t/ha','tk'));
+    });
+    let d='';
+    V.forEach((r,i)=>{ d+=(i?'L':'M')+(P.l+i*bw+bw/2)+' '+Yp(r.pesoRacimo); });
+    s.appendChild(el('path',{d,fill:'none',stroke:'var(--amber)','stroke-width':2.6,'stroke-linecap':'round'}));
+    V.forEach((r,i)=>{
+      const cx=P.l+i*bw+bw/2, cy=Yp(r.pesoRacimo);
+      const c=el('circle',{cx,cy,r:5,fill:'var(--bg)',stroke:'var(--amber)','stroke-width':2.4});
+      const tt=el('title',{}); tt.textContent=`${r.anio}: racimo de ${nf(r.pesoRacimo,1)} kg`;
+      c.appendChild(tt); s.appendChild(c);
+      s.appendChild(txt(cx,cy-12,nf(r.pesoRacimo,1),'vlab','middle',{fill:'var(--amber)'}));
+    });
+    s.appendChild(txt(W-P.r+8,P.t-14,'kg por','tk','start',{fill:'var(--amber)'}));
+    s.appendChild(txt(W-P.r+8,P.t,'racimo','tk','start',{fill:'var(--amber)'}));
+    s.appendChild(txt(P.l,H-10,'* 2026 va hasta el 26 de septiembre','tk','start'));
+    document.getElementById('chRacimo').appendChild(s);
+
+    const p22=V[0].pesoRacimo, p26=V[V.length-1].pesoRacimo;
+    const r24=V.find(r=>r.anio===2024), r25=V.find(r=>r.anio===2025);
+    document.getElementById('racimonote').innerHTML=
+      `<b>El racimo creció un ${nf((p26/p22-1)*100)}% desde que arrancó</b>, de ${nf(p22,1)} a ${nf(p26,1)} kg, `+
+      `y el salto más grande fue de 2025 a 2026. Es lo que uno espera de una palma entrando a su mejor edad. `+
+      `Este es el indicador más limpio que tiene: no depende del precio, ni de cuántos viajes se hicieron, ni de quién compró.`;
+    document.getElementById('racimonote2').innerHTML=
+      `<b>Y mire quién manda en los altibajos.</b> El peso sube parejo año tras año; lo que se desploma y se recupera `+
+      `es el número de racimos: ${nf(r24.racHa)} por hectárea en 2024 contra ${nf(r25.racHa)} en 2025, más del doble. `+
+      `El bache de 2024 no fue de racimos flacos —pesaron ${nf(r24.pesoRacimo,1)} kg, casi lo mismo que en 2023— `+
+      `<b>fue de racimos que nunca se formaron.</b> Ahí mandan el agua y la nutrición de uno o dos años antes, `+
+      `y es justo lo que cuadra con las palmas que se murieron de sed ese año.`;
+    document.getElementById('racimonote2').innerHTML +=
+      ` <b>Regla para leer 2027:</b> si el racimo sigue engordando pero las toneladas no suben, el cuello de botella `+
+      `está en el número, no en el llenado — y entonces la respuesta es riego y abono, no manejo de cosecha.`;
+  })();
+
 
 /* ---------- 3b. fertilizacion vs cosecha siguiente ---------- */
 (function(){
