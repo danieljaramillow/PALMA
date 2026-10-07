@@ -2,11 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>if(window.navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches))document.documentElement.classList.add("app")</script>
 <title>Balsora · Historial de producción de palma</title>
 <link rel="icon" type="image/svg+xml" href="logo-palma-k.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0E1A13">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Balsora">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -119,6 +124,16 @@ footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:v
   .reveal{animation:rise .5s ease-out both}
   @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
+
+/* En la app instalada (pantalla de inicio) se oculta el encabezado */
+@media (display-mode: standalone), (display-mode: fullscreen){
+  header.top{display:none}
+  body{padding-top:env(safe-area-inset-top,0px)}
+  nav.tabs{top:env(safe-area-inset-top,0px)}
+}
+html.app header.top{display:none}
+html.app body{padding-top:env(safe-area-inset-top,0px)}
+html.app nav.tabs{top:env(safe-area-inset-top,0px)}
 </style>
 </head>
 <body>
