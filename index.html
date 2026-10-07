@@ -277,6 +277,11 @@ footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:v
   <p class="note"><b>2023 se corta en junio y 2024 casi no tiene segundo semestre.</b> En esos meses la hoja registra pagos pero no despachos de fruta. Vale la pena confirmar si fue una parada real del lote o si quedaron guías sin anotar.</p>
 
   <div class="panel" style="margin-top:18px">
+    <h3 class="sub">Historial completo, mes tras mes</h3>
+    <div id="chHist"></div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
     <h3 class="sub">Último despacho registrado</h3>
     <table class="mini">
       <tr><td>Fecha</td><td class="n">26 de septiembre de 2026</td></tr>
@@ -533,6 +538,32 @@ document.getElementById('legMes').addEventListener('click',e=>{
   chMes();
 });
 chMes();
+
+/* ---------- 1b. historial completo ---------- */
+function chHist(){
+  const pts=[]; years.forEach(y=>D.mensualKg[y].forEach((v,i)=>{ if(v!==null) pts.push({y,i,v}); }));
+  const W=900,H=340,P={l:58,r:16,t:14,b:40}, n=pts.length;
+  const s=svg(W,H), max=Math.max(...pts.map(p=>p.v));
+  const T=ticks(max,5), top=T[T.length-1];
+  const X=k=>P.l+k*(W-P.l-P.r)/(n-1), Y=v=>H-P.b-(v/top)*(H-P.b-P.t);
+  T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,Y(t)+4,nf(t/1000)+' t','tk','end'));});
+  pts.forEach((p,k)=>{
+    if(p.i===0 && k>0) s.appendChild(el('line',{x1:X(k),x2:X(k),y1:P.t,y2:H-P.b,class:'gl'}));
+    if(p.i===0||p.i===6) s.appendChild(txt(X(k),H-P.b+16,p.i===0?String(p.y):MES[p.i],p.i===0?'tkb':'tk',p.i===0?'start':'middle'));
+  });
+  s.appendChild(el('path',{d:pts.map((p,k)=>(k?'L':'M')+X(k)+' '+Y(p.v)).join(''),fill:'none',
+    stroke:'var(--amber)','stroke-width':2.4,'stroke-linejoin':'round','stroke-linecap':'round'}));
+  pts.forEach((p,k)=>{
+    const c=el('circle',{cx:X(k),cy:Y(p.v),r:2.6,fill:'var(--bg)',stroke:'var(--amber)','stroke-width':1.8});
+    const tt=el('title',{}); tt.textContent=`${MES[p.i]} ${p.y}: ${nf(p.v)} kg`; c.appendChild(tt);
+    s.appendChild(c);
+  });
+  const b=pts.reduce((a,p,k)=>p.v>a.p.v?{p,k}:a,{p:pts[0],k:0});
+  s.appendChild(txt(X(b.k),Y(b.p.v)-9,nf(b.p.v/1000,0)+' t','vlab','middle'));
+  const c=document.getElementById('chHist'); c.innerHTML=''; c.appendChild(s);
+}
+chHist();
 
 /* ---------- 2. estacionalidad ---------- */
 (function(){
