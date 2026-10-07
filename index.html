@@ -134,6 +134,9 @@ footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);color:v
 html.app header.top{display:none}
 html.app body{padding-top:env(safe-area-inset-top,0px)}
 html.app nav.tabs{top:env(safe-area-inset-top,0px)}
+nav.tabs .reg-link{margin-left:auto;align-self:center;font:600 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;
+  text-decoration:none;color:#fff;background:var(--fruit);border-radius:6px;padding:8px 12px;margin-bottom:6px;white-space:nowrap}
+nav.tabs .reg-link:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -280,6 +283,7 @@ html.app nav.tabs{top:env(safe-area-inset-top,0px)}
   <button class="tab" data-t="plata"    aria-selected="false">Plata</button>
   <button class="tab" data-t="decision" aria-selected="false">La decisión</button>
   <button class="tab" data-t="datos"    aria-selected="false">Letra chica</button>
+  <a class="reg-link" href="https://claude.ai/artifact/E4aq5iydkacVoZKNUWD1D9" target="_blank" rel="noopener">+ Registrar</a>
 </nav>
 
 <section data-tab="prod">
