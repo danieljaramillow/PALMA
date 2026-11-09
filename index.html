@@ -376,27 +376,17 @@ nav.tabs .reg-link:focus-visible{outline:2px solid var(--amber);outline-offset:2
 </section>
 
 <section data-tab="proy">
-  <h2>Cuánto puede dar 2027</h2>
-  <p class="lead">Proyección de la cosecha del año entrante a partir del nivel que ya alcanzó el lote, el agua que cayó en los meses que forman el pico y el abono aplicado. Toque un escenario para ver cómo se reparte mes a mes.</p>
+  <h2>El agua que ya está escrita en la cosecha de 2027</h2>
+  <p class="lead">Déficit del balance hídrico en las ventanas que Cenipalma encontró correlacionadas con la producción, medidas hacia atrás desde cada mes de cosecha y ponderadas por el peso de ese mes en el año. Más alto es peor.</p>
   <div class="panel">
-    <div class="legend" id="legProy"></div>
-    <div id="chProy"></div>
-  </div>
-  <p class="note" id="proynote"></p>
-</section>
-
-<section data-tab="proy">
-  <h2>La ventana que forma el pico de 2027</h2>
-  <p class="lead">Con el desfase de siete meses, la lluvia de agosto a octubre de 2026 es la que define la cosecha de marzo a mayo de 2027. La línea es lo que consume la palma: unos 140 mm al mes.</p>
-  <div class="grid2">
-    <div class="panel"><div id="chVentana"></div></div>
-    <div class="panel"><div id="chAbonoProy"></div></div>
+    <div class="legend" id="legCap2"></div>
+    <div id="chVentanas"></div>
   </div>
   <p class="note" id="ventnote"></p>
 </section>
 
 <section data-tab="proy">
-  <h2>Qué tan firme es esta proyección</h2>
+  <h2>Qué se puede decir de 2027 y qué no</h2>
   <div class="panel">
     <ul class="checks" id="proyChecks"></ul>
   </div>
@@ -421,6 +411,16 @@ nav.tabs .reg-link:focus-visible{outline:2px solid var(--amber);outline-offset:2
   <p class="note" id="pluvnote"></p>
   <div class="panel" style="margin-top:18px"><div id="chDias"></div></div>
   <p class="note" id="diasnote"></p>
+</section>
+
+<section data-tab="agua">
+  <h2>Balance hídrico mes a mes</h2>
+  <p class="lead">Cada mes el suelo recibe la lluvia y la palma le saca unos 140 mm. Lo que sobra queda guardado hasta llenar el suelo; lo que no alcanza a cubrir el suelo es déficit. La capacidad de guardar agua depende de la textura del suelo, que todavía no está medida: pruebe los tres valores.</p>
+  <div class="panel">
+    <div class="legend" id="legCap"></div>
+    <div id="chBalance"></div>
+  </div>
+  <p class="note" id="balnote"></p>
 </section>
 
 <section data-tab="agua">
@@ -489,7 +489,6 @@ nav.tabs .reg-link:focus-visible{outline:2px solid var(--amber);outline-offset:2
       <li><b>La serie del IDEAM mide la mitad del agua real.</b> En los cinco meses verificables contra el pluviómetro de la finca (ago-dic 2025), la estimación se quedó en 864 mm contra 1.608 medidos. Todo lo que dependa de milímetros absolutos del IDEAM hay que tomarlo con pinzas.</li>
       <li><b>No existe pluviometría propia antes de julio de 2025</b>, y no va a aparecer: el cuaderno lo llevan los empleados actuales. 2022, 2023 y 2024 quedan sin medición de agua, para siempre. La pregunta de qué pasó en 2024 no se puede responder con datos de lluvia.</li>
       <li><b>El registro se interrumpió el 18 de junio de 2026.</b> Faltan julio, agosto y septiembre, que son los meses que más pesan. Retomarlo ya es lo más barato que se puede hacer por el análisis del año entrante.</li>
-      <li><b>El 24 de octubre de 2026 el cuaderno dice 142 mm.</b> Es el aguacero más grande de todo el registro y casi tres cuartos del mes. Si fue 14,2, octubre baja a 73 mm y la ventana del pico de 2027 queda en déficit.</li>
       <li><b>Hay lecturas dudosas en la transcripción:</b> el 2 de febrero de 2026 lo leí como 142 mm (podría ser 42), y el día de enero con 19 mm podría ser el 5 o el 6. Conviene verificarlas contra el cuaderno.</li>
       <li><b>La serie de lluvia llega hasta diciembre de 2025.</b> Los meses de 2026 quedan sin comparación.</li>
       <li><b>Impuestos, retiros y pago de deudas pesan $342 millones.</b> No son costo del cultivo; conviene separarlos para calcular el costo real por tonelada.</li>
@@ -1451,126 +1450,120 @@ chHist();
       <td class="n">${nf(tot.eg/1e6)} M</td><td class="n">${tot.viajes}</td></tr></tbody>`;
   document.getElementById('tabla').innerHTML=h;
 })();
-/* ---------- proyección 2027 ---------- */
-(function(){
-  const A=D.anual, ha=D.meta.ha, est=D.estacionalidad, KG=D.mensualKg;
-  const a25=A.find(r=>r.anio===2025), a26=A.find(r=>r.anio===2026);
-  // completar nov y dic de 2026 con la estacionalidad histórica
-  const restoShare=(est[10]+est[11])/100;
-  const kg26=a26.kg/(1-restoShare);
-  const m26=KG['2026'].map((v,i)=>v!==null?v:kg26*est[i]/100);
-  // reparto mensual: promedio de 2025 y 2026, los dos años maduros
-  const sh=KG['2025'].map((v,i)=>(v/a25.kg+m26[i]/kg26)/2);
-  const sum=sh.reduce((a,b)=>a+b,0), share=sh.map(v=>v/sum);
-  const baseT=(a25.kg+kg26)/2/1000;
-  const precio=a26.precio;
-  const c23=A.find(r=>r.anio===2023), c24=A.find(r=>r.anio===2024);
-  const ESC=[
-    {k:'esp',nom:'Esperado',col:'var(--frond)',t:baseT,
-     why:`agua suficiente en la ventana del pico y ${mill(45e6)} de abono, dentro del rango de las dos mejores cosechas`},
-    {k:'abono',nom:'Con abono bajo',col:'var(--amber)',t:c23.tonHa*ha,
-     why:`lo que dio 2023, la cosecha que siguió al abono más bajo (${mill(18.3e6)} en 2022)`},
-    {k:'seca',nom:'Verano sin riego',col:'var(--fruit)',t:c24.tonHa*ha,
-     why:`lo que dio 2024, después del año seco en que murieron 80 palmas`}
-  ];
-  let cur='esp';
-  const leg=document.getElementById('legProy');
-  leg.innerHTML=ESC.map(e=>`<button class="chip esc" data-k="${e.k}" aria-pressed="${e.k===cur}" style="color:${e.col}">${e.nom} · ${nf(e.t)} t</button>`).join('');
-  function draw(){
-    const e=ESC.find(x=>x.k===cur);
-    const P27=share.map(v=>v*e.t*1000);
-    const W=900,H=340,P={l:62,r:16,t:36,b:44};
-    const s=svg(W,H);
-    const max=Math.max(...P27,...m26)*1.12, T=ticks(max,4), top=T[T.length-1];
-    const bw=(W-P.l-P.r)/12, Y=v=>H-P.b-(v/top)*(H-P.b-P.t);
-    T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
-      s.appendChild(txt(P.l-8,Y(t)+4,nf(t/1000)+' t','tk','end'));});
-    P27.forEach((v,i)=>{
-      const x=P.l+i*bw+bw*.18, w=bw*.64;
-      const r=el('rect',{x,y:Y(v),width:w,height:H-P.b-Y(v),fill:e.col,opacity:.9});
-      const tt=el('title',{}); tt.textContent=`${MES[i]} 2027: ${nf(v/1000)} t proyectadas · 2026: ${nf(m26[i]/1000)} t`;
-      r.appendChild(tt); s.appendChild(r);
-      if(v>40000) s.appendChild(txt(x+w/2,Y(v)-8,nf(v/1000),'vlab'));
-      s.appendChild(txt(x+w/2,H-P.b+18,MES[i],'tkb'));
-    });
-    // 2026 real como línea
-    const pts=m26.map((v,i)=>`${P.l+i*bw+bw/2},${Y(v)}`).join(' ');
-    s.appendChild(el('polyline',{points:pts,fill:'none',stroke:'var(--ink2)','stroke-width':1.5,'stroke-dasharray':'4 4'}));
-    m26.forEach((v,i)=>s.appendChild(el('circle',{cx:P.l+i*bw+bw/2,cy:Y(v),r:3,fill:'var(--ink2)'})));
-    s.appendChild(txt(P.l,P.t-16,`Barras: 2027 en el escenario «${e.nom.toLowerCase()}»   ·   línea punteada: 2026 real (nov y dic estimados)`,'tkb','start'));
-    const c=document.getElementById('chProy'); c.innerHTML=''; c.appendChild(s);
-    const pico=P27.slice(2,5).reduce((a,b)=>a+b,0)/1000;
-    document.getElementById('proynote').innerHTML=
-      `<b>${e.nom}: ${nf(e.t)} toneladas en 2027, ${nf(e.t/ha,1)} t por hectárea.</b> Es ${e.why}. `+
-      `Marzo a mayo pondrían <b>${nf(pico)} t</b>. Al precio promedio de 2026 (${money(precio)} el kilo) son unos <b>${mill(e.t*1000*precio)}</b> de ingreso por fruta. `+
-      (e.k==='esp'?`2026 debería cerrar cerca de <b>${nf(kg26/1000)} t</b>; el escenario esperado supone que el lote se sostiene en ese nivel, que es lo que hacen las palmas de diez años cuando no les falta agua ni abono.`:
-       e.k==='abono'?`Este piso exagera: en 2023 la palma era dos años más joven. Pero es el único dato que tiene el lote de qué pasa cuando el abono baja a la mitad. Los ${mill(45e6)} de 2026 ya están comprados, así que este escenario no aplica a 2027; sirve para pensar 2028.`:
-       `Ahora el riego está habilitado, así que este escenario es justamente el que el sistema existe para evitar. Si el verano de diciembre a abril viene duro y el riego no se prende, este es el riesgo: perder unas ${nf(baseT-e.t)} t, o ${mill((baseT-e.t)*1000*precio)}.`);
+/* ---------- balance hídrico ---------- */
+const BAL=(function(){
+  const IDE=D.lluviaFull, F={}; D.pluvio.forEach(r=>{F[r.t]=r;}); F['2026-03']={mm:0};
+  const WET=[4,5,6,7,8,9,10,11], FACT=1.86, ET=140;
+  const key=i=>{const y=Math.floor(i/12),m=i%12;return `${y}-${String(m+1).padStart(2,'0')}`;};
+  const normal=m=>{ // promedio IDEAM corregido 2020-2025 y cuaderno, por mes
+    let ide=0; for(let y=2020;y<=2025;y++) ide+=IDE[`${y}-${String(m).padStart(2,'0')}`];
+    ide=ide/6*(WET.includes(m)?FACT:1);
+    const f=Object.keys(F).filter(k=>+k.slice(5)===m&&k>='2025-08'&&!F[k].parcial).map(k=>F[k].mm);
+    return f.length?(ide+f.reduce((a,b)=>a+b,0)/f.length)/2:ide;
+  };
+  function rain(k){
+    const m=+k.slice(5);
+    if(k>='2025-08'&&F[k]){ if(F[k].parcial){const d=+F[k].parcial.replace(/\D/g,'');return {p:F[k].mm+normal(m)*(30-d)/30,src:'parcial'};}
+      return {p:F[k].mm,src:'finca'};}
+    if(IDE[k]!==undefined) return {p:IDE[k]*(WET.includes(m)?FACT:1),src:'ideam'};
+    return {p:normal(m),src:'normal'};
   }
-  leg.addEventListener('click',ev=>{const b=ev.target.closest('.esc'); if(!b) return; cur=b.dataset.k;
-    leg.querySelectorAll('.esc').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw();});
-  draw();
-
-  /* ventana ago-oct: 2025 vs 2026 en el pluviómetro */
-  (function(){
-    const V=D.pluvio, ms=['08','09','10'], W=440,H=300,P={l:50,r:10,t:34,b:46};
-    const s=svg(W,H);
-    const g=y=>ms.map(m=>(V.find(r=>r.t===`${y}-${m}`)||{mm:0}).mm);
-    const v25=g(2025), v26=g(2026), max=Math.max(...v25,...v26)*1.15, T=ticks(max,4), top=T[T.length-1];
-    const Y=v=>H-P.b-(v/top)*(H-P.b-P.t), bw=(W-P.l-P.r)/3;
-    T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
-      s.appendChild(txt(P.l-6,Y(t)+4,nf(t),'tk','end'));});
-    ms.forEach((m,i)=>{
-      [[v25[i],'var(--ink3)',.14],[v26[i],'var(--water)',.52]].forEach(([v,c,o],j)=>{
-        const x=P.l+i*bw+bw*o, w=bw*.34;
-        const r=el('rect',{x,y:Y(v),width:w,height:H-P.b-Y(v),fill:c});
-        const tt=el('title',{}); tt.textContent=`${MES[+m-1]} ${j?2026:2025}: ${nf(v)} mm`; r.appendChild(tt); s.appendChild(r);
-        s.appendChild(txt(x+w/2,Y(v)-6,nf(v),'vlab'));});
-      s.appendChild(txt(P.l+i*bw+bw/2,H-P.b+18,MES[+m-1],'tkb'));
-    });
-    s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(140),y2:Y(140),stroke:'var(--amber)','stroke-width':1.5,'stroke-dasharray':'6 4'}));
-    s.appendChild(txt(W-P.r,Y(140)-6,'140 mm','tk','end',{fill:'var(--amber)'}));
-    s.appendChild(txt(P.l,P.t-14,'Gris: 2025   ·   azul: 2026 (mm del cuaderno)','tkb','start'));
-    document.getElementById('chVentana').appendChild(s);
-    const t25=v25.reduce((a,b)=>a+b,0), t26=v26.reduce((a,b)=>a+b,0), falt=v26.reduce((a,v)=>a+Math.max(0,140-v),0);
-    document.getElementById('ventnote').innerHTML=
-      `<b>De agosto a octubre de 2026 cayeron ${nf(t26)} mm, menos de la mitad de los ${nf(t25)} de 2025.</b> `+
-      `Pero la palma no aprovecha lo que pasa de unos 140 mm al mes: el resto se va por escorrentía. Medido así, a la ventana solo le faltaron `+
-      `<b>${nf(falt)} mm</b>, todos en agosto. Por eso el escenario esperado no castiga el pico de 2027. `+
-      `Del lado del abono, los ${mill(45e6)} de 2026 están en el rango que acompañó las dos mejores cosechas del lote.`;
-  })();
-
-  /* abono del año anterior vs cosecha */
-  (function(){
-    const F=D.fert, W=440,H=300,P={l:50,r:10,t:34,b:46};
-    const s=svg(W,H);
-    const rows=F.map(f=>{const c=A.find(r=>r.anio===f.anio+1);return {a:f.anio,fert:f.real,t:c?c.tonHa:null,parc:c&&c.parcial};});
-    rows[rows.length-1].t=baseT/ha;rows[rows.length-1].proy=true;
-    const maxT=Math.max(...rows.map(r=>r.t))*1.2, T=ticks(maxT,4), top=T[T.length-1];
-    const Y=v=>H-P.b-(v/top)*(H-P.b-P.t), bw=(W-P.l-P.r)/rows.length;
-    T.forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
-      s.appendChild(txt(P.l-6,Y(t)+4,nf(t),'tk','end'));});
-    rows.forEach((r,i)=>{
-      const x=P.l+i*bw+bw*.2, w=bw*.6;
-      const rect=el('rect',{x,y:Y(r.t),width:w,height:H-P.b-Y(r.t),fill:r.proy?'none':'var(--frond)',stroke:'var(--frond)','stroke-width':1.5,'stroke-dasharray':r.proy?'4 3':'0'});
-      const tt=el('title',{}); tt.textContent=`Abono ${r.a}: ${mill(r.fert)} → cosecha ${r.a+1}: ${nf(r.t,1)} t/ha${r.proy?' (proyectada)':''}`;
-      rect.appendChild(tt); s.appendChild(rect);
-      s.appendChild(txt(x+w/2,Y(r.t)-6,nf(r.t,1),'vlab'));
-      s.appendChild(txt(x+w/2,H-P.b+16,String(r.a+1),'tkb'));
-      s.appendChild(txt(x+w/2,H-P.b+32,'$'+nf(r.fert/1e6)+' M','tk','middle',{fill:'var(--amber)'}));
-    });
-    s.appendChild(txt(P.l,P.t-14,'t/ha de cosecha, con el abono del año anterior debajo','tkb','start'));
-    document.getElementById('chAbonoProy').appendChild(s);
-  })();
-
-  document.getElementById('proyChecks').innerHTML=`
-    <li><b>Es un escenario, no un pronóstico estadístico.</b> El lote tiene cuatro cosechas completas, y dos de ellas (2024 y 2025) se formaron con la misma lluvia del IDEAM y dieron una 2,5 veces la otra. Con tan pocos años no se puede ajustar un modelo que separe el efecto del agua del efecto del abono.</li>
-    <li><b>El nivel base sale de 2025 y 2026</b>, los dos años en que la palma ya estaba madura y no le faltó ni agua ni abono: ${nf(baseT)} t en promedio, con noviembre y diciembre de 2026 estimados con la estacionalidad.</li>
-    <li><b>El reparto mes a mes repite la forma de esos dos años.</b> Si el pico se corre un mes, el total no cambia pero el flujo de caja sí.</li>
-    <li><b>Lo que puede mover 2027 hacia abajo es el verano de diciembre a abril.</b> Por el desfase, esa sequía cae sobre la cosecha de julio a noviembre, que es la chica. El pico grande ya quedó formado.</li>
-    <li><b>Lo que puede moverlo hacia arriba es el riego</b>, si se prende en el verano. Todavía no hay un solo dato de producción bajo riego, así que no lo sumé.</li>
-    <li><b>Cada lluvia nueva del cuaderno afina la proyección.</b> Siga registrándolas en «+ Registrar» y mándeme la foto o el resumen para pasarlas acá.</li>`;
+  function run(cap,desde=2020*12,hasta=2027*12+11){
+    let st=cap; const out={};
+    for(let i=desde;i<=hasta;i++){const k=key(i),r=rain(k);
+      st+=r.p-ET; let d=0; if(st<0){d=-st;st=0;} st=Math.min(st,cap);
+      out[k]={p:r.p,st,d,src:r.src};}
+    return out;
+  }
+  return {run,key,ET};
 })();
+let CAP=150;
+function capChips(id,cb){
+  const box=document.getElementById(id);
+  box.innerHTML=[100,150,200].map(c=>`<button class="chip cap" data-c="${c}" aria-pressed="${c===CAP}" style="color:var(--water)">suelo guarda ${c} mm</button>`).join('')+
+    `<span class="chip" style="color:var(--ink3);cursor:default;border-color:var(--line)">arenoso ≈ 100 · franco ≈ 150 · arcilloso ≈ 200</span>`;
+  box.addEventListener('click',e=>{const b=e.target.closest('.cap'); if(!b) return; CAP=+b.dataset.c;
+    document.querySelectorAll('.cap').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.c===CAP)); drawAll();});
+}
+function drawBalance(){
+  const B=BAL.run(CAP), ks=Object.keys(B).filter(k=>k>='2022-01'&&k<='2026-11');
+  const W=900,H=380,P={l:58,r:14,t:40,b:46}, s=svg(W,H);
+  const top=Math.max(300,Math.ceil(Math.max(...ks.map(k=>Math.max(B[k].p,B[k].d)))/50)*50);
+  const Y=v=>H-P.b-(v/top)*(H-P.b-P.t), bw=(W-P.l-P.r)/ks.length;
+  ticks(top,4).forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(t),y2:Y(t),class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,Y(t)+4,nf(t)+' mm','tk','end'));});
+  const fx=ks.findIndex(k=>k>='2025-08');
+  s.appendChild(el('rect',{x:P.l+fx*bw,y:P.t,width:W-P.r-(P.l+fx*bw),height:H-P.b-P.t,fill:'var(--water)',opacity:.07}));
+  s.appendChild(txt(P.l+fx*bw+6,P.t+14,'cuaderno de la finca','tk','start',{fill:'var(--water)'}));
+  s.appendChild(txt(P.l+fx*bw-6,P.t+14,'IDEAM corregido','tk','end'));
+  ks.forEach((k,i)=>{const r=B[k],x=P.l+i*bw;
+    const a=el('rect',{x:x+bw*.1,y:Y(r.p),width:bw*.8,height:H-P.b-Y(r.p),fill:'var(--water)',opacity:r.src==='ideam'?.45:(r.src==='parcial'?.3:.85)});
+    const t=el('title',{}); t.textContent=`${k}: lluvia ${nf(r.p)} mm · suelo ${nf(r.st)} mm · déficit ${nf(r.d)} mm`+(r.src==='parcial'?' (mes en curso, completado con lo normal)':''); a.appendChild(t); s.appendChild(a);
+    if(r.d>0){const d=el('rect',{x:x+bw*.25,y:Y(r.d),width:bw*.5,height:H-P.b-Y(r.d),fill:'var(--fruit)'});
+      const t2=el('title',{}); t2.textContent=`${k}: déficit ${nf(r.d)} mm`; d.appendChild(t2); s.appendChild(d);}
+    if(k.endsWith('-01')) s.appendChild(txt(x+bw*6,H-P.b+20,k.slice(0,4),'tkb'));
+  });
+  const pts=ks.map((k,i)=>`${P.l+i*bw+bw/2},${Y(B[k].st)}`).join(' ');
+  s.appendChild(el('polyline',{points:pts,fill:'none',stroke:'var(--amber)','stroke-width':2}));
+  s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Y(140),y2:Y(140),stroke:'var(--ink3)','stroke-dasharray':'3 4'}));
+  s.appendChild(txt(P.l,P.t-18,'Azul: lluvia   ·   naranja: agua guardada en el suelo   ·   rojo: déficit   ·   punteada: 140 mm que consume la palma','tkb','start'));
+  const c=document.getElementById('chBalance'); c.innerHTML=''; c.appendChild(s);
+  const anual=y=>Object.keys(B).filter(k=>k.startsWith(y)&&k<='2026-11').reduce((a,k)=>a+B[k].d,0);
+  const v26=['2026-03','2026-04','2026-05'].reduce((a,k)=>a+B[k].d,0);
+  document.getElementById('balnote').innerHTML=
+    `<b>Con un suelo que guarda ${CAP} mm, 2026 lleva ${nf(anual('2026'))} mm de déficit, `+(Math.abs(anual('2026')-v26)<1?'todo entre marzo y mayo':`${nf(v26)} de ellos entre marzo y mayo`)+`.</b> `+
+    `El aguacero de 142 mm del 24 de octubre llenó el suelo de un golpe, pero el suelo no guarda más de ${CAP}: el resto se fue. Por eso el balance importa más que el total del mes. `+
+    `Antes de agosto de 2025 el balance usa el IDEAM multiplicado por 1,86 en los meses de lluvia, que es lo que se quedó corto frente al cuaderno. `+
+    `<b>Esa corrección le quita casi toda la diferencia entre años:</b> 2022 da ${nf(anual('2022'))} mm, 2023 ${nf(anual('2023'))} y 2024 ${nf(anual('2024'))}. `+
+    `Una serie así no alcanza a ver la sequía que mató 80 palmas, así que los años viejos sirven para la forma de la temporada, no para medir cuánto faltó.`;
+}
+
+/* ---------- ventanas de 2027 ---------- */
+function drawVentanas(){
+  const B=BAL.run(CAP), est=D.estacionalidad, th={}; D.anual.forEach(a=>th[a.anio]=a);
+  const V=[['0–5','llenado y peso',0,5],['9–11','aborto de flores',9,11],['12–14','',12,14],['17–22','sexo de la flor',17,22],['29–32','',29,32]];
+  const Ys=[2023,2024,2025,2026,2027];
+  const calc=(Y,a,b)=>{let tot=0,fin=0,all=0;for(let m=0;m<12;m++){for(let L=a;L<=b;L++){const k=BAL.key(Y*12+m-L),r=B[k];
+      tot+=est[m]/100*r.d; all+=est[m]/100; if(r.src==='finca'||r.src==='parcial') fin+=est[m]/100;}}return {v:tot,fin:fin/all};};
+  const M=Ys.map(Y=>V.map(w=>calc(Y,w[2],w[3])));
+  const W=900,H=400,P={l:58,r:14,t:40,b:96}, s=svg(W,H);
+  const top=Math.ceil(Math.max(...M.flat().map(x=>x.v))*1.15/50)*50, Yp=v=>H-P.b-(v/top)*(H-P.b-P.t);
+  ticks(top,4).forEach(t=>{s.appendChild(el('line',{x1:P.l,x2:W-P.r,y1:Yp(t),y2:Yp(t),class:t===0?'ax':'gl'}));
+    s.appendChild(txt(P.l-8,Yp(t)+4,nf(t)+' mm','tk','end'));});
+  const gw=(W-P.l-P.r)/V.length, bw=gw*.8/Ys.length;
+  const col=['var(--ink3)','var(--fruit)','var(--amber)','var(--frond)','var(--water)'];
+  V.forEach((w,j)=>{
+    Ys.forEach((Y,i)=>{const r=M[i][j], x=P.l+j*gw+gw*.1+i*bw;
+      const rect=el('rect',{x,y:Yp(r.v),width:bw*.86,height:H-P.b-Yp(r.v),fill:col[i],opacity:Y===2027?1:.75,
+        stroke:Y===2027?'var(--ink)':'none','stroke-width':1});
+      const t=el('title',{}); t.textContent=`Cosecha ${Y}, ventana ${w[0]} meses: ${nf(r.v)} mm de déficit · ${nf(r.fin*100)}% medido en la finca`;
+      rect.appendChild(t); s.appendChild(rect);});
+    s.appendChild(txt(P.l+j*gw+gw/2,H-P.b+20,w[0]+' meses antes','tkb'));
+    if(w[1]) s.appendChild(txt(P.l+j*gw+gw/2,H-P.b+36,w[1],'tk'));
+  });
+  Ys.forEach((Y,i)=>{const x=P.l+i*150, y=H-26;
+    s.appendChild(el('rect',{x,y:y-10,width:12,height:12,fill:col[i]}));
+    s.appendChild(txt(x+18,y,`${Y}${th[Y]?' · '+nf(th[Y].tonHa,1)+' t/ha'+(th[Y].parcial?'*':''):' · ?'}`,'tk','start'));});
+  s.appendChild(txt(P.l,P.t-18,'Déficit en cada ventana, por cosecha','tkb','start'));
+  const c=document.getElementById('chVentanas'); c.innerHTML=''; c.appendChild(s);
+  const w27=M[4], w26=M[3];
+  document.getElementById('ventnote').innerHTML=
+    `<b>Para 2027 la ventana más cargada es la de 9 a 11 meses: ${nf(w27[1].v)} mm, la más alta de la serie.</b> `+
+    `Es la sequía de marzo a mayo de 2026 cayendo sobre las flores que se cortan entre diciembre y marzo. Ahí es donde Cenipalma ubica el aborto de inflorescencias, `+
+    `así que lo esperable es <b>menos racimos al arranque de 2027</b>, antes del pico. `+
+    `En cambio la ventana de 17 a 22 meses, donde se define cuántas flores salen femeninas, da ${nf(w27[3].v)} mm para 2027 contra ${nf(w26[3].v)} para 2026: `+
+    `cayó sobre 2025, que en la finca fue un año muy lluvioso. Eso empuja el pico de marzo a mayo hacia arriba. `+
+    `<b>Ojo con comparar barras de años distintos:</b> 2023 y 2024 salen 100% del IDEAM corregido, y las de 2027 mezclan cuaderno con lo que falta por llover. La ventana de 0 a 5 meses de 2027 cae casi toda en 2027, así que ahí supuse un año de lluvia normal: es la única barra que todavía puede cambiar.`;
+  document.getElementById('proyChecks').innerHTML=`
+    <li><b>No le pongo una cifra de toneladas a 2027.</b> Para convertir milímetros de déficit en toneladas hace falta un coeficiente del lote, y con cuatro cosechas y la lluvia vieja del IDEAM no sale: 2024 y 2025 tienen déficits casi iguales en el balance y una dio 2,5 veces la otra. Una cifra con decimales sería inventada.</li>
+    <li><b>Lo que el balance sí dice:</b> el arranque de 2027 (diciembre a marzo) viene golpeado por la sequía de marzo a mayo de 2026, y el pico de marzo a mayo de 2027 tiene a favor un 2025 muy húmedo en la ventana que define el sexo de la flor.</li>
+    <li><b>Cómo verificarlo sin esperar a abril:</b> el conteo de racimos por despacho. Si diciembre, enero y febrero salen con menos racimos que hace un año pero con peso normal, es el aborto; si el peso también baja, es estrés en el llenado. El dashboard ya separa número y peso.</li>
+    <li><b>La capacidad del suelo mueve mucho los números.</b> Entre 100 y 200 mm el déficit de 2026 cambia en más de cien milímetros. Una prueba de textura del suelo o un aforo de humedad en verano lo resuelve y vale poco.</li>
+    <li><b>El abono todavía no entra en este análisis.</b> En pesos no sirve; hace falta saber productos, kilos por palma y meses de aplicación de cada año, y si hay análisis foliar. Con eso se puede ver si el abono llegó en una ventana con agua para tomarlo.</li>
+    <li><b>Desde agosto de 2025 todo sale del cuaderno.</b> Cada mes que se sigue registrando reemplaza un mes de IDEAM y le da más peso al análisis. En dos años el lote va a tener su propio coeficiente.</li>`;
+}
+function drawAll(){drawBalance();drawVentanas();}
+capChips('legCap'); capChips('legCap2'); drawAll();
 
 /* ---------- pestañas ---------- */
 (function(){
